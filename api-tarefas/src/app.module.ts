@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TasksModule } from './tasks/tasks.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -18,6 +20,7 @@ dotenv.config();
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
+      dropSchema: false,
       extra: {
         ssl: {
           rejectUnauthorized: false,
@@ -25,6 +28,8 @@ dotenv.config();
       },
     }),
     TasksModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
