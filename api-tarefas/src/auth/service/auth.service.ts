@@ -15,16 +15,16 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService
-  ) { }
+  ) {}
 
   async signIn(email: string, password: string) {
     const usuario = await this.usersService.findByEmail(email);
     if (!usuario) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
     const senhaValida = await this.compareSenhas(password, usuario.password);
     if (!senhaValida) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
     return await this.gerarToken(usuario);
   }

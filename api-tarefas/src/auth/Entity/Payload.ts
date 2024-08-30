@@ -1,5 +1,5 @@
-export class Payload {
-    username?: string;
-    email?: string;
-    sub?: string;
+export interface Payload {
+  username?: string;
+  email?: string;
+  sub?: string;
 }

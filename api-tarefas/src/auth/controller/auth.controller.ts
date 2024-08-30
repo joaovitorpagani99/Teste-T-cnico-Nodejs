@@ -13,7 +13,7 @@ import { User } from "src/users/entities/user.entity";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @Post("register")
   @Public()
@@ -25,9 +25,7 @@ export class AuthController {
   @Post("login")
   @Public()
   @HttpCode(HttpStatus.OK)
-  async login(
-    @Body() signInDto: Record<string, any>
-  ): Promise<{ access_token: string }> {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  async login(@Request() req) {
+    return this.authService.signIn(req.body.email, req.body.password);
   }
 }
