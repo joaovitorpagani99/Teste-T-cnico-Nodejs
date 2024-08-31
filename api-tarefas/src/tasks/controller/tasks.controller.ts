@@ -1,34 +1,54 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
-import { TasksService } from '../service/tasks.service';
-import { Task } from '../entities/task.entity';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+  HttpStatus,
+  HttpCode,
+} from "@nestjs/common";
+import { TasksService } from "../service/tasks.service";
+import { Task } from "../entities/task.entity";
+import { CreateTaskDto } from "../dto/create-task.dto";
+import { UpdateTaskDto } from "../dto/update-task.dto";
 
-
-@Controller('tasks')
+@Controller("tasks")
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) { }
+  constructor(private readonly tasksService: TasksService) {}
 
   @Get()
-  findAll(): Promise<Task[]> {
-    return this.tasksService.findAll();
+  @HttpCode(HttpStatus.OK)
+  async findAll(): Promise<Task[]> {
+    return await this.tasksService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number): Promise<Task> {
-    return this.tasksService.findOne(id);
+  @Get(":id")
+  @HttpCode(HttpStatus.OK)
+  async findOne(@Param("id") id: number): Promise<Task> {
+    return await this.tasksService.findOne(id);
   }
 
   @Post()
-  create(@Body() task: Task): Promise<Task> {
-    return this.tasksService.create(task);
+  @HttpCode(HttpStatus.CREATED)
+  create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
+    return this.tasksService.create(createTaskDto);
   }
 
-  @Put(':id')
-  update(@Param('id') id: number, @Body() task: Task): Promise<void> {
-    return this.tasksService.update(id, task);
+  @Put(":id")
+  @HttpCode(HttpStatus.OK)
+  update(
+    @Param("id") id: number,
+    @Body() updateTaskDto: UpdateTaskDto
+  ): Promise<Task> {
+    return this.tasksService.update(+id, updateTaskDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
+  @Delete(":id")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param("id") id: number): Promise<void> {
     return this.tasksService.remove(id);
   }
 }
