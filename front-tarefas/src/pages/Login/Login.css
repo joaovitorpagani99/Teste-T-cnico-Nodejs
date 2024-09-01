@@ -1,6 +1,10 @@
-.content {
+.container-login {
+    max-width: 100%;
+}
+
+
+.container-login {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
 }

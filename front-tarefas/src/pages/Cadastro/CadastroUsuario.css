@@ -1,0 +1,14 @@
+.container-cadastro {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.card-cadastro-user {
+    height: 100%;
+    width: 400px;
+    padding: 20px;
+}
+
+.container-cadastro {}
