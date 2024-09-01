@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Cadastro.css'; 
+import './Cadastro.css';
 
-function Cadastro() {
+function CadastroTask() {
     const [titulo, setTitulo] = useState('');
     const [descricao, setDescricao] = useState('');
 
@@ -44,4 +44,4 @@ function Cadastro() {
     );
 }
 
-export default Cadastro;
+export default CadastroTask;
