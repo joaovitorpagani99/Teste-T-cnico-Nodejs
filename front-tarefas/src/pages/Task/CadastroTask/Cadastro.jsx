@@ -1,47 +1,53 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './Cadastro.css';
 
-function CadastroTask() {
-    const [titulo, setTitulo] = useState('');
-    const [descricao, setDescricao] = useState('');
+function Cadastro() {
+    const [novaTask, setNovaTask] = useState('');
+    const [tasks, setTasks] = useState([]);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Tarefa cadastrada:', { titulo, descricao });
-        setTitulo('');
-        setDescricao('');
+    const handleAddTask = () => {
+        if (novaTask.trim() !== '') {
+            setTasks([...tasks, { nome: novaTask, concluida: false }]);
+            setNovaTask('');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    const handleToggleConcluida = (index) => {
+        const newTasks = [...tasks];
+        newTasks[index].concluida = !newTasks[index].concluida;
+        setTasks(newTasks);
     };
 
     return (
-        <section className="container mt-5">
-            <h1 className="mb-4">Cadastro de Tarefas</h1>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="titulo">Título</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="titulo"
-                        value={titulo}
-                        onChange={(e) => setTitulo(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="descricao">Descrição</label>
-                    <textarea
-                        className="form-control"
-                        id="descricao"
-                        value={descricao}
-                        onChange={(e) => setDescricao(e.target.value)}
-                        required
-                    ></textarea>
-                </div>
-                <button type="submit" className="btn btn-primary mt-3">Cadastrar</button>
-            </form>
-        </section>
+        <div>
+            <div className="input-group mt-3">
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Nova tarefa"
+                    value={novaTask}
+                    onChange={(e) => setNovaTask(e.target.value)}
+                />
+                <button className="btn btn-success" onClick={handleAddTask}>
+                    <i className="bi bi-plus-lg"></i>
+                </button>
+            </div>
+            <ul className="list-group mt-3">
+                {tasks.map((task, index) => (
+                    <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                        <span style={{ textDecoration: task.concluida ? 'line-through' : 'none' }}>
+                            {task.nome}
+                        </span>
+                        <input
+                            type="checkbox"
+                            checked={task.concluida}
+                            onChange={() => handleToggleConcluida(index)}
+                        />
+                    </li>
+                ))}
+            </ul>
+        </div>
     );
 }
 
-export default CadastroTask;
+export default Cadastro;

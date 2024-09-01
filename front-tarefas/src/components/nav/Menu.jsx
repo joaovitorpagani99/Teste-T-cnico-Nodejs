@@ -10,6 +10,7 @@ function Menu() {
                 </Link>
                 <div className="menu-links d-flex gap-3">
                     <Link to="/" className="menu-link">Home</Link>
+                    <Link to="/tasks" className="menu-link">Cadastrar Tarefas</Link>
                     <Link to="/tasks" className="menu-link">Tarefas</Link>
                 </div>
             </nav>
