@@ -1,0 +1,13 @@
+.menu-link {
+    text-decoration: none;
+    color: black;
+    background-color: #f8f9fa;
+    padding: 0.2rem 0.8rem;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.menu-link:hover {
+    color: #007BFF;
+    text-decoration: none;
+    background-color: aliceblue;
+}
