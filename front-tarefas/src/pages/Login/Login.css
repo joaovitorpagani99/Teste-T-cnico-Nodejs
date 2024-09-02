@@ -1,10 +1,11 @@
 .container-login {
-    max-width: 100%;
-}
-
-
-.container-login {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.card-login {
+    width: 450px;
+    padding: 20px;
+    margin-top: 80px;
 }

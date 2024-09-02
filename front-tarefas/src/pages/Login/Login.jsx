@@ -6,18 +6,15 @@ function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Login:', { username, password });
-        setUsername('');
-        setPassword('');
     };
 
     return (
         <div className="container-login">
-            <Card className="p-3">
+            <Card className="p-5 card-login">
                 <Card.Body>
-                    <Card.Title className="mb-2">Login</Card.Title>
+                    <Card.Title className="mb-3 text-center">Login</Card.Title>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="username">
                             <Form.Label>Email</Form.Label>
@@ -25,22 +22,23 @@ function Login() {
                                 type="text"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                required
                             />
                         </Form.Group>
-                        <Form.Group controlId="password" className="mt-3">
+                        <Form.Group controlId="password">
                             <Form.Label>Senha</Form.Label>
                             <Form.Control
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                required
                             />
                         </Form.Group>
-                        <Button variant="primary" type="submit" className="mt-3">
-                            Entrar
-                        </Button>
+                        <div className="d-flex justify-content-center mt-4 mb-4">
+                            <Button variant="primary" type="submit">
+                                Entrar
+                            </Button>
+                        </div>
                     </Form>
+                    <p className="mt-3 text-center">Se não tiver conta, <a href="/cadastroUsuario">cadastre-se</a></p>
                 </Card.Body>
             </Card>
         </div>
