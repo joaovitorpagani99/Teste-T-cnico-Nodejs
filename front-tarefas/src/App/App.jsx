@@ -22,7 +22,7 @@ function App() {
           <Menu />
           <main className="content">
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
               <Route path="/tasks" element={<PrivateRoute><ListagemTask /></PrivateRoute>} />
               <Route path="/tasks/:id" element={<PrivateRoute><CadastroTask /></PrivateRoute>} />
               <Route path="/cadastroTask" element={<PrivateRoute><CadastroTask /></PrivateRoute>} />
