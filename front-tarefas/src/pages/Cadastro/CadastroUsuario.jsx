@@ -1,27 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import AuthContext from '../../contexts/AuthContext';
+import toast from "react-hot-toast";
+
 import './CadastroUsuario.css';
-import toast from 'react-hot-toast';
 
 function CadastroUsuario() {
-    const [nome, setNome] = useState('');
-    const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
-    const [confirmarSenha, setConfirmarSenha] = useState('');
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { cadastro } = useContext(AuthContext);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (senha !== confirmarSenha) {
+    const onSubmit = async (data) => {
+        if (data.password !== data.confirmarSenha) {
             toast.error('As senhas não coincidem!');
             return;
         }
+        const user = {
+            name: data.nome,
+            email: data.email,
+            password: data.password
+        };
         try {
-            register({ email, password, name });
-            navigate('/login');
-        } catch (error) {
-            toast.error(error.message);
-            setError(err.message);
+            await cadastro(user);
+            toast.success('Usuário cadastrado com sucesso!');
+        } catch (err) {
+            const errorMessage = err.message || 'Erro ao realizar cadastro.';
+            toast.error(errorMessage);
+            setError(errorMessage);
         }
     };
 
@@ -30,42 +38,38 @@ function CadastroUsuario() {
             <Card className="p-3">
                 <Card.Body className='card-cadastro-user'>
                     <Card.Title className="mb-2">Cadastro de Usuário</Card.Title>
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={handleSubmit(onSubmit)}>
                         <Form.Group controlId="nome">
                             <Form.Label>Nome</Form.Label>
                             <Form.Control
                                 type="text"
-                                value={nome}
-                                onChange={(e) => setNome(e.target.value)}
-                                required
+                                {...register('nome', { required: 'Nome é obrigatório' })}
                             />
+                            {errors.nome && <p className="error">{errors.nome.message}</p>}
                         </Form.Group>
-                        <Form.Group controlId="email" className="mt-3">
+                        <Form.Group controlId="email">
                             <Form.Label>Email</Form.Label>
                             <Form.Control
                                 type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
+                                {...register('email', { required: 'Email é obrigatório' })}
                             />
+                            {errors.email && <p className="error">{errors.email.message}</p>}
                         </Form.Group>
-                        <Form.Group controlId="senha" className="mt-3">
+                        <Form.Group controlId="password">
                             <Form.Label>Senha</Form.Label>
                             <Form.Control
                                 type="password"
-                                value={senha}
-                                onChange={(e) => setSenha(e.target.value)}
-                                required
+                                {...register('password', { required: 'Senha é obrigatória' })}
                             />
+                            {errors.password && <p className="error">{errors.password.message}</p>}
                         </Form.Group>
-                        <Form.Group controlId="confirmarSenha" className="mt-3">
+                        <Form.Group controlId="confirmarSenha">
                             <Form.Label>Confirmar Senha</Form.Label>
                             <Form.Control
                                 type="password"
-                                value={confirmarSenha}
-                                onChange={(e) => setConfirmarSenha(e.target.value)}
-                                required
+                                {...register('confirmarSenha', { required: 'Confirmação de senha é obrigatória' })}
                             />
+                            {errors.confirmarSenha && <p className="error">{errors.confirmarSenha.message}</p>}
                         </Form.Group>
                         {error && <p className="error">{error}</p>}
                         <Button variant="primary" type="submit" className="mt-3">

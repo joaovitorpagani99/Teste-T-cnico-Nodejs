@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login as apiLogin } from '../Services/Auth';
+import { login as apiLogin, register as apiCadastro } from '../Services/Auth';
 
 const AuthContext = createContext();
 
@@ -18,16 +18,30 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             const data = await apiLogin(email, password);
-            console.log(data);
             if (data && data.access_token) {
                 setUser({ token: data.access_token });
-                localStorage.setItem('token', data.token);
+                localStorage.setItem('token', data.access_token);
                 navigate('/');
             } else {
                 throw new Error('Token de acesso não encontrado na resposta de login.');
             }
         } catch (error) {
             throw new Error(error.message || 'Erro ao realizar login.');
+        }
+    };
+
+    const cadastro = async (name, email, password) => {
+        try {
+            const data = await apiCadastro(name, email, password);
+            if (data && data.access_token) {
+                setUser({ token: data.access_token });
+                localStorage.setItem('token', data.access_token);
+                navigate('/');
+            } else {
+                throw new Error('Token de acesso não encontrado na resposta de cadastro.');
+            }
+        } catch (error) {
+            throw new Error(error.message || 'Erro ao realizar cadastro.');
         }
     };
 
@@ -38,7 +52,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, cadastro, logout }}>
             {children}
         </AuthContext.Provider>
     );

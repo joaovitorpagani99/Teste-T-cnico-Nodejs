@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import AuthContext from '../../contexts/AuthContext';
 import toast from "react-hot-toast";
 
@@ -12,12 +11,10 @@ function Login() {
     const { login } = useContext(AuthContext);
     const [error, setError] = useState('');
 
-    const navigate = useNavigate();
 
     const onSubmit = async (data) => {
         try {
             await login(data.email, data.password);
-            navigate('/');
             toast.success('Login realizado com sucesso!');
         } catch (err) {
             setError(err.message);
