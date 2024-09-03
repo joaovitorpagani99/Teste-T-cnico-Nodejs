@@ -10,6 +10,7 @@ import CadastroUsuario from '../pages/Cadastro/CadastroUsuario';
 import NotFound from '../pages/NotFound/NotFound';
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from '../contexts/AuthContext';
+import PrivateRoute from '../components/private/PrivateRoute';
 
 import './App.css';
 
@@ -22,9 +23,9 @@ function App() {
           <main className="content">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/tasks" element={<ListagemTask />} />
-              <Route path="/tasks/:id" element={<CadastroTask />} />
-              <Route path="/cadastroTask" element={<CadastroTask />} />
+              <Route path="/tasks" element={<PrivateRoute><ListagemTask /></PrivateRoute>} />
+              <Route path="/tasks/:id" element={<PrivateRoute><CadastroTask /></PrivateRoute>} />
+              <Route path="/cadastroTask" element={<PrivateRoute><CadastroTask /></PrivateRoute>} />
               <Route path='/cadastroUsuario' element={<CadastroUsuario />} />
               <Route path="/login" element={<Login />} />
               <Route path="*" element={<NotFound />} />
