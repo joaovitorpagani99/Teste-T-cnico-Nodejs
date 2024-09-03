@@ -2,10 +2,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 70PX;
 }
 
 .card-login {
-    width: 450px;
-    padding: 20px;
-    margin-top: 80px;
+    width: 100%;
+    max-width: 400px;
 }

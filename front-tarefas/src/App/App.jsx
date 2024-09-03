@@ -8,26 +8,32 @@ import Menu from "../components/nav/Menu";
 import ListagemTask from '../pages/Task/ListagemTask/ListagemTask';
 import CadastroUsuario from '../pages/Cadastro/CadastroUsuario';
 import NotFound from '../pages/NotFound/NotFound';
+import { Toaster } from "react-hot-toast";
+import { AuthProvider } from '../contexts/AuthContext';
+
 import './App.css';
 
 function App() {
   return (
     <Router>
-      <div id="root">
-        <Menu />
-        <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/tasks" element={<ListagemTask />} />
-            <Route path="/tasks/:id" element={<CadastroTask />} />
-            <Route path="/cadastroTask" element={<CadastroTask />} />
-            <Route path='/cadastroUsuario' element={<CadastroUsuario />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+      <AuthProvider>
+        <div className="app-container">
+          <Menu />
+          <main className="content">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/tasks" element={<ListagemTask />} />
+              <Route path="/tasks/:id" element={<CadastroTask />} />
+              <Route path="/cadastroTask" element={<CadastroTask />} />
+              <Route path='/cadastroUsuario' element={<CadastroUsuario />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </AuthProvider>
+      <Toaster />
     </Router>
   );
 }
