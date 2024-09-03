@@ -9,6 +9,7 @@ import { UsersService } from "src/users/service/users.service";
 import * as bcrypt from "bcryptjs";
 import { Payload } from "../Entity/Payload";
 import { User } from "src/users/entities/user.entity";
+import { CreateUserDto } from "src/users/dto/create-user.dto";
 
 @Injectable()
 export class AuthService {
@@ -47,17 +48,24 @@ export class AuthService {
       });
   }
 
-  async register(user: User) {
-    const existingUser = await this.usersService.findByEmail(user.email);
+  async register(createUserDto: CreateUserDto): Promise<any> {
+    const existingUser = await this.usersService.findByEmail(
+      createUserDto.email
+    );
     if (existingUser) {
       throw new ConflictException("User already exists");
     }
 
-    if (!user.password) {
+    if (!createUserDto.password) {
       throw new BadRequestException("Password is required");
     }
 
-    user.password = await bcrypt.hash(user.password, 10);
+    createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
+
+    const user = new User();
+    user.name = createUserDto.name;
+    user.email = createUserDto.email;
+    user.password = createUserDto.password;
 
     const savedUser = await this.usersService.create(user);
     const payload = { sub: savedUser.id, username: savedUser.email };
