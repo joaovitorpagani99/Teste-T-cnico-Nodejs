@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
 import './CadastroUsuario.css';
+import toast from 'react-hot-toast';
 
 function CadastroUsuario() {
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
+    const [error, setError] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (senha !== confirmarSenha) {
-            alert('As senhas não coincidem!');
+            toast.error('As senhas não coincidem!');
             return;
         }
-        console.log('Usuário cadastrado:', { nome, email, senha });
-        setNome('');
-        setEmail('');
-        setSenha('');
-        setConfirmarSenha('');
+        try {
+            register({ email, password, name });
+            navigate('/login');
+        } catch (error) {
+            toast.error(error.message);
+            setError(err.message);
+        }
     };
 
     return (
@@ -63,6 +67,7 @@ function CadastroUsuario() {
                                 required
                             />
                         </Form.Group>
+                        {error && <p className="error">{error}</p>}
                         <Button variant="primary" type="submit" className="mt-3">
                             Cadastrar
                         </Button>

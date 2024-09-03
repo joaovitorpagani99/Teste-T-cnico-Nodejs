@@ -22,7 +22,7 @@ function Home() {
                         </Link>
                     </div>
                     <div className="col-md-6">
-                        <Link to="/cadastro" className="text-decoration-none">
+                        <Link to="/cadastroTask" className="text-decoration-none">
                             <div className="card text-center mb-4">
                                 <div className="card-body">
                                     <i className="bi bi-pencil-square display-4"></i>
