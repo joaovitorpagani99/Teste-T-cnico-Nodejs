@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { login } from '../../Services/Auth';
 import { useNavigate } from 'react-router-dom';
+import AuthContext from '../../contexts/AuthContext';
 import toast from "react-hot-toast";
 
 import './Login.css';
 
 function Login() {
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const { login } = useContext(AuthContext);
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
 
     const onSubmit = async (data) => {
         try {
-            const response = await login(data.email, data.password);
-            localStorage.setItem('token', response.token);
+            await login(data.email, data.password);
             navigate('/');
             toast.success('Login realizado com sucesso!');
         } catch (err) {
