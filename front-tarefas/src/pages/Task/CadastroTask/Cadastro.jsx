@@ -1,53 +1,61 @@
 import React, { useState } from 'react';
+import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { createTask } from '../../../Services/Tasks';
+import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
-function Cadastro() {
-    const [novaTask, setNovaTask] = useState('');
-    const [tasks, setTasks] = useState([]);
+function CadastroTask() {
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const navigate = useNavigate();
 
-    const handleAddTask = () => {
-        if (novaTask.trim() !== '') {
-            setTasks([...tasks, { nome: novaTask, concluida: false }]);
-            setNovaTask('');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+    const handleAddTask = async () => {
+        try {
+            const userId = localStorage.getItem('userId');
+            const taskData = { title, description, userId: parseInt(userId) };
+            const newTask = await createTask(taskData);
+            toast.success('Tarefa adicionada com sucesso!', newTask.name);
+            navigate('/tasks');
+        } catch (error) {
+            toast.error('Erro ao adicionar tarefa!');
+            console.error('Erro ao adicionar tarefa:', error);
         }
     };
 
-    const handleToggleConcluida = (index) => {
-        const newTasks = [...tasks];
-        newTasks[index].concluida = !newTasks[index].concluida;
-        setTasks(newTasks);
-    };
-
     return (
-        <div>
-            <div className="input-group mt-3">
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Nova tarefa"
-                    value={novaTask}
-                    onChange={(e) => setNovaTask(e.target.value)}
-                />
-                <button className="btn btn-success" onClick={handleAddTask}>
-                    <i className="bi bi-plus-lg"></i>
-                </button>
-            </div>
-            <ul className="list-group mt-3">
-                {tasks.map((task, index) => (
-                    <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                        <span style={{ textDecoration: task.concluida ? 'line-through' : 'none' }}>
-                            {task.nome}
-                        </span>
-                        <input
-                            type="checkbox"
-                            checked={task.concluida}
-                            onChange={() => handleToggleConcluida(index)}
-                        />
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <Container className="mt-5">
+            <Row className="justify-content-md-center">
+                <Col md={6}>
+                    <h1 className="mb-4">Cadastro de Tarefa</h1>
+                    <Form>
+                        <Form.Group controlId="formTitle">
+                            <Form.Label>Título</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Digite o título"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="formDescription" className="mt-3">
+                            <Form.Label>Descrição</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Digite a descrição"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                            />
+                        </Form.Group>
+
+                        <Button variant="primary" className="mt-4" onClick={handleAddTask}>
+                            Adicionar Tarefa
+                        </Button>
+                    </Form>
+                </Col>
+            </Row>
+        </Container>
     );
 }
 
-export default Cadastro;
+export default CadastroTask;
