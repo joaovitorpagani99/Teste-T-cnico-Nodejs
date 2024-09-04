@@ -1,12 +1,11 @@
 import axios from "axios";
 
-const apiUrl = "http://localhost:3000/tasks";
+const apiUrl = "http://localhost:3000/tasks"; // Verifique se esta URL está correta
 
 // Função para obter o token do localStorage
 const getToken = () => {
     return localStorage.getItem('token');
 };
-
 
 // Função para obter todas as tarefas
 export const getTasks = async () => {

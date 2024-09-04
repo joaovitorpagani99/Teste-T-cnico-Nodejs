@@ -11,6 +11,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
 
@@ -19,7 +20,10 @@ export const AuthProvider = ({ children }) => {
         if (token) {
             setUser({ token });
             setIsAuthenticated(true);
+        } else {
+            console.log('Nenhum token encontrado no localStorage.');
         }
+        setLoading(false);
     }, []);
 
     const login = async (email, password) => {
@@ -62,7 +66,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, login, cadastro, logout }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, loading, login, cadastro, logout }}>
             {children}
         </AuthContext.Provider>
     );
