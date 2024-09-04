@@ -21,6 +21,7 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.CREATED)
   async register(@Request() req) {
+    console.log(req.body);
     return this.authService.register(req.body);
   }
 
