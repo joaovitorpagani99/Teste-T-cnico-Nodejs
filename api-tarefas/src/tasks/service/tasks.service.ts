@@ -14,10 +14,12 @@ export class TasksService {
     private usersService: UsersService
   ) {}
 
-  async findAll(): Promise<Task[]> {
-    const tasks = await this.tasksRepository.find();
+  async findAll(userId: number): Promise<Task[]> {
+    const tasks = await this.tasksRepository.find({
+      where: { user: { id: userId } },
+    });
     if (tasks.length == 0) {
-      throw new NotFoundException("No tasks found");
+      throw new NotFoundException("No tasks found for this user");
     }
     return tasks;
   }
