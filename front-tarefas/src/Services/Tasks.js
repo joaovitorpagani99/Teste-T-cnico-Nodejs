@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiUrl = "http://localhost:3000/tasks"; // Verifique se esta URL está correta
+const apiUrl = `${import.meta.env.VITE_API_URL}/tasks`;
 
 // Função para obter o token do localStorage
 const getToken = () => {
