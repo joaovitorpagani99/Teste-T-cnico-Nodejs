@@ -7,7 +7,7 @@ const getToken = () => {
     return localStorage.getItem('token');
 };
 
-// Função para obter todas as tarefas
+// Função para obter todas as tarefas de um usuário específico
 export const getTasks = async () => {
     try {
         const token = getToken();
