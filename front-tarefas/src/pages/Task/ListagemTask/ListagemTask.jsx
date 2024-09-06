@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getTasks, updateTask, deleteTask, completeTask } from '../../../Services/Tasks';
-import { Container, ListGroup, Dropdown, Alert, Spinner } from 'react-bootstrap';
+import { Container, ListGroup, Dropdown, Alert, Spinner, Accordion, Card } from 'react-bootstrap';
 import { FaEdit, FaTrash, FaCheck, FaEllipsisV } from 'react-icons/fa';
 
 function ListagemTask() {
@@ -56,7 +56,7 @@ function ListagemTask() {
         try {
             const token = localStorage.getItem('token');
             await completeTask(id, token);
-            setTasks(tasks.map(task => (task.id === id ? { ...task, completed: true } : task)));
+            setTasks(tasks.map(task => (task.id === id ? { ...task, isCompleted: true } : task)));
         } catch (error) {
             setError(error.message);
             console.error("Erro ao concluir tarefa:", error);
@@ -81,17 +81,20 @@ function ListagemTask() {
         );
     }
 
+    const pendingTasks = tasks.filter(task => !task.isCompleted);
+    const completedTasks = tasks.filter(task => task.isCompleted);
+
     return (
         <Container>
             <h1 className="my-4">Lista de Tarefas</h1>
             <ListGroup>
-                {tasks.map(task => (
-                    <ListGroup.Item key={task.id} className="d-flex justify-content-between align-items-center">
+                {pendingTasks.map(task => (
+                    <ListGroup.Item key={task.id} className="d-flex justify-content-between align-items-center mb-2 rounded-4">
                         <div>
-                            <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
+                            <span style={{ textDecoration: task.isCompleted ? 'line-through' : 'none' }}>
                                 {task.title}
                             </span>
-                            <p className="mb-0 text-muted">{task.description}</p>
+                            <p className="mb-0 text-muted small">{task.description}</p>
                         </div>
                         <Dropdown>
                             <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0" />
@@ -110,6 +113,36 @@ function ListagemTask() {
                     </ListGroup.Item>
                 ))}
             </ListGroup>
+            <Accordion className="mt-4">
+                <Accordion.Item eventKey="0">
+                    <Accordion.Header>Tarefas Concluídas</Accordion.Header>
+                    <Accordion.Body>
+                        <ListGroup>
+                            {completedTasks.map(task => (
+                                <ListGroup.Item key={task.id} className="d-flex justify-content-between align-items-center mb-2 rounded-4">
+                                    <div>
+                                        <span style={{ textDecoration: 'line-through' }}>
+                                            {task.title}
+                                        </span>
+                                        <p className="mb-0 text-muted small">{task.description}</p>
+                                    </div>
+                                    <Dropdown>
+                                        <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0" />
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => handleEdit(task.id, { ...task, title: 'Novo Título' })}>
+                                                <FaEdit className="me-2" /> Editar
+                                            </Dropdown.Item>
+                                            <Dropdown.Item onClick={() => handleDelete(task.id)}>
+                                                <FaTrash className="me-2" /> Deletar
+                                            </Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </ListGroup.Item>
+                            ))}
+                        </ListGroup>
+                    </Accordion.Body>
+                </Accordion.Item>
+            </Accordion>
         </Container>
     );
 }
