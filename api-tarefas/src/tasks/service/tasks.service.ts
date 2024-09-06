@@ -73,4 +73,15 @@ export class TasksService {
     await this.findOne(id);
     await this.tasksRepository.delete(id);
   }
+
+  async complete(id: number): Promise<Task> {
+    const task = await this.findOne(id);
+    if (!task) {
+      throw new NotFoundException("Task not found");
+    }
+
+    task.isCompleted = true;
+    await this.tasksRepository.save(task);
+    return task;
+  }
 }
