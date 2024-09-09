@@ -1,108 +1,81 @@
-// front-tarefas/src/Services/Tasks.js
+import axios from 'axios';
 
-import axios from "axios";
+const API_URL = 'http://localhost:3000/tasks'; // Certifique-se de que o endpoint está correto
 
-const apiUrl = `${import.meta.env.VITE_API_URL}/tasks`;
-
-// Função para obter o token do localStorage
-const getToken = () => {
-    return localStorage.getItem('token');
-};
-
-// Função para obter todas as tarefas de um usuário específico
-export const getTasks = async () => {
+export const getTasks = async (token) => {
     try {
-        const token = getToken();
-        const response = await axios.get(apiUrl, {
+        const response = await axios.get(API_URL, {
             headers: {
-                Authorization: `Bearer ${token}`
+                'Authorization': `Bearer ${token}`
             }
         });
+        console.log("Resposta da API no getTasks:", response.data); // Adicionar log para verificar a resposta da API
         return response.data;
     } catch (error) {
-        console.error("Erro ao obter tarefas:", error);
-        throw error;
+        throw new Error('Erro ao buscar tarefas');
     }
 };
 
-// Função para obter uma tarefa específica por ID
-export const getTaskById = async (id) => {
+export const createTask = async (task) => {
     try {
-        const token = getToken();
-        const response = await axios.get(`${apiUrl}/${id}`, {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(API_URL, task, {
             headers: {
-                Authorization: `Bearer ${token}`
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
         });
+        console.log("Resposta da API no createTask:", response.data); // Adicionar log para verificar a resposta da API
         return response.data;
     } catch (error) {
-        console.error(`Erro ao obter a tarefa com ID ${id}:`, error);
-        throw error;
+        throw new Error('Erro ao criar tarefa');
     }
 };
 
-// Função para criar uma nova tarefa
-export const createTask = async (taskData) => {
+export const updateTask = async (taskId, task) => {
     try {
-        const token = getToken();
-        const response = await axios.post(apiUrl, taskData, {
+        const token = localStorage.getItem('token');
+        const response = await axios.put(`${API_URL}/${taskId}`, task, {
             headers: {
-                Authorization: `Bearer ${token}`
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
         });
+        console.log("Resposta da API no updateTask:", response.data); // Adicionar log para verificar a resposta da API
         return response.data;
     } catch (error) {
-        console.error("Erro ao criar tarefa:", error);
-        throw error;
+        throw new Error('Erro ao atualizar tarefa');
     }
 };
 
-// Função para atualizar uma tarefa existente
-export const updateTask = async (id, taskData) => {
+export const deleteTask = async (taskId) => {
     try {
-        const token = getToken();
-        const response = await axios.put(`${apiUrl}/${id}`, taskData, {
+        const token = localStorage.getItem('token');
+        const response = await axios.delete(`${API_URL}/${taskId}`, {
             headers: {
-                Authorization: `Bearer ${token}`
+                'Authorization': `Bearer ${token}`
             }
         });
+        console.log("Resposta da API no deleteTask:", response.data); // Adicionar log para verificar a resposta da API
         return response.data;
     } catch (error) {
-        console.error(`Erro ao atualizar a tarefa com ID ${id}:`, error);
-        throw error;
+        throw new Error('Erro ao deletar tarefa');
     }
 };
 
-// Função para deletar uma tarefa
-export const deleteTask = async (id) => {
+export const toggleCompleteTask = async (taskId) => {
     try {
-        const token = getToken();
-        await axios.delete(`${apiUrl}/${id}`, {
+        const token = localStorage.getItem('token');
+        const response = await axios.patch(`${API_URL}/${taskId}/toggle-complete`, {}, {
             headers: {
-                Authorization: `Bearer ${token}`
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
         });
-    } catch (error) {
-        console.error(`Erro ao deletar a tarefa com ID ${id}:`, error);
-        throw error;
-    }
-};
-
-
-
-// Função para alternar o estado de conclusão de uma tarefa
-export const toggleCompleteTask = async (id) => {
-    try {
-        const token = getToken();
-        const response = await axios.patch(`${apiUrl}/${id}/toggle-complete`, {}, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        console.log("Resposta da API no toggleCompleteTask:", response.data); // Adicionar log para verificar a resposta da API
         return response.data;
     } catch (error) {
-        console.error(`Erro ao alternar o estado de conclusão da tarefa com ID ${id}:`, error);
-        throw error;
+        throw new Error('Erro ao atualizar tarefa');
     }
 };
 
