@@ -48,3 +48,15 @@
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
 }
+
+.task-item.pending::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 100%;
+    background-color: #ffc107;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
