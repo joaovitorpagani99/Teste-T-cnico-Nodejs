@@ -5,9 +5,7 @@ import { FaEdit, FaTrash, FaCheck, FaPlus } from 'react-icons/fa';
 import LoadingSpinner from '../../components/loading/LoadingSpinner';
 import ModalTask from '../../components/ModalTask/ModalTask';
 
-import './Task.css';
-
-function Task() {
+function ListagemTask() {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -185,4 +183,4 @@ function Task() {
     );
 }
 
-export default Task;
+export default ListagemTask;
