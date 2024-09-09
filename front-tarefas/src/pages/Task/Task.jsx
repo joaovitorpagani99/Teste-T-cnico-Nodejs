@@ -14,7 +14,7 @@ function Task() {
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
-    const [filterDate, setFilterDate] = useState(''); // Estado para a data de filtro
+    const [filterDate, setFilterDate] = useState(''); 
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -25,7 +25,7 @@ function Task() {
                 }
 
                 const data = await getTasks(token);
-                console.log("Resposta da API:", data); // Adicionar log para verificar a resposta da API
+                console.log("Resposta da API:", data);
                 if (Array.isArray(data)) {
                     setTasks(data);
                 } else {
