@@ -1,6 +1,8 @@
+// front-tarefas/src/Services/Tasks.js
+
 import axios from "axios";
 
-const apiUrl = "http://localhost:3000/tasks"; // Verifique se esta URL está correta
+const apiUrl = `${import.meta.env.VITE_API_URL}/tasks`;
 
 // Função para obter o token do localStorage
 const getToken = () => {
@@ -82,6 +84,24 @@ export const deleteTask = async (id) => {
         });
     } catch (error) {
         console.error(`Erro ao deletar a tarefa com ID ${id}:`, error);
+        throw error;
+    }
+};
+
+
+
+// Função para alternar o estado de conclusão de uma tarefa
+export const toggleCompleteTask = async (id) => {
+    try {
+        const token = getToken();
+        const response = await axios.patch(`${apiUrl}/${id}/toggle-complete`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Erro ao alternar o estado de conclusão da tarefa com ID ${id}:`, error);
         throw error;
     }
 };

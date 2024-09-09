@@ -14,10 +14,12 @@ export class TasksService {
     private usersService: UsersService
   ) {}
 
-  async findAll(): Promise<Task[]> {
-    const tasks = await this.tasksRepository.find();
+  async findAll(userId: number): Promise<Task[]> {
+    const tasks = await this.tasksRepository.find({
+      where: { user: { id: userId } },
+    });
     if (tasks.length == 0) {
-      throw new NotFoundException("No tasks found");
+      throw new NotFoundException("No tasks found for this user");
     }
     return tasks;
   }
@@ -70,5 +72,27 @@ export class TasksService {
   async remove(id: number): Promise<void> {
     await this.findOne(id);
     await this.tasksRepository.delete(id);
+  }
+
+  async complete(id: number): Promise<Task> {
+    const task = await this.findOne(id);
+    if (!task) {
+      throw new NotFoundException("Task not found");
+    }
+
+    task.isCompleted = true;
+    await this.tasksRepository.save(task);
+    return task;
+  }
+
+  async toggleComplete(id: number): Promise<Task> {
+    const task = await this.findOne(id);
+    if (!task) {
+      throw new NotFoundException("Task not found");
+    }
+
+    task.isCompleted = !task.isCompleted;
+    await this.tasksRepository.save(task);
+    return task;
   }
 }

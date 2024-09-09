@@ -3,12 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
   HttpStatus,
   HttpCode,
+  Req,
+  Patch,
 } from "@nestjs/common";
 import { TasksService } from "../service/tasks.service";
 import { Task } from "../entities/task.entity";
@@ -21,8 +22,10 @@ export class TasksController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(): Promise<Task[]> {
-    return await this.tasksService.findAll();
+  async findAll(@Req() req): Promise<Task[]> {
+    const userId = req.user.sub;
+    console.log(userId);
+    return await this.tasksService.findAll(userId);
   }
 
   @Get(":id")
@@ -33,22 +36,33 @@ export class TasksController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.tasksService.create(createTaskDto);
+  async create(
+    @Req() req,
+    @Body() createTaskDto: CreateTaskDto
+  ): Promise<Task> {
+    const userId = req.user.sub;
+    return this.tasksService.create({ ...createTaskDto, userId });
   }
 
   @Put(":id")
   @HttpCode(HttpStatus.OK)
-  update(
-    @Param("id") id: number,
+  async update(
+    @Req() req,
     @Body() updateTaskDto: UpdateTaskDto
   ): Promise<Task> {
-    return this.tasksService.update(+id, updateTaskDto);
+    const userId = req.user.sub;
+    return this.tasksService.update(userId, { ...updateTaskDto });
   }
 
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param("id") id: number): Promise<void> {
     return this.tasksService.remove(id);
+  }
+
+  @Patch(":id/toggle-complete")
+  @HttpCode(HttpStatus.OK)
+  async toggleComplete(@Param("id") id: number): Promise<Task> {
+    return this.tasksService.toggleComplete(id);
   }
 }
