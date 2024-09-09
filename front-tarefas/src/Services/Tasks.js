@@ -103,3 +103,21 @@ export const completeTask = async (id) => {
         throw error;
     }
 };
+
+// tasks.js
+
+// Função para alternar o estado de conclusão de uma tarefa
+export const toggleCompleteTask = async (id) => {
+    try {
+        const token = getToken();
+        const response = await axios.patch(`${apiUrl}/${id}/toggle-complete`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Erro ao alternar o estado de conclusão da tarefa com ID ${id}:`, error);
+        throw error;
+    }
+};
