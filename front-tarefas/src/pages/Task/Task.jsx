@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getTasks, toggleCompleteTask, deleteTask, createTask, updateTask } from '../../Services/Tasks';
 import { Container, ListGroup, Dropdown, Alert, Accordion, Button, Form } from 'react-bootstrap';
 import { FaEdit, FaTrash, FaPlus, FaEllipsisV } from 'react-icons/fa';
 import LoadingSpinner from '../../components/loading/LoadingSpinner';
 import ModalTask from '../../components/ModalTask/ModalTask';
 import toast from 'react-hot-toast';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './Task.css';
+import DateCarousel from '../../components/DateCarousel/DateCarousel';
 
 function Task() {
     const [tasks, setTasks] = useState([]);
@@ -16,17 +16,13 @@ function Task() {
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
-    const [filterDate, setFilterDate] = useState(null);
+    const [filterDate, setFilterDate] = useState(new Date());
+    const [isDateFilterEnabled, setIsDateFilterEnabled] = useState(true);
 
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    throw new Error("Token not found in localStorage");
-                }
-
-                const data = await getTasks(token);
+                const data = await getTasks(isDateFilterEnabled ? filterDate : null);
                 console.log("Resposta da API:", data);
                 if (Array.isArray(data)) {
                     setTasks(data);
@@ -48,7 +44,7 @@ function Task() {
         };
 
         fetchTasks();
-    }, []);
+    }, [filterDate, isDateFilterEnabled]);
 
     const handleEdit = (task) => {
         setCurrentTask(task);
@@ -104,7 +100,7 @@ function Task() {
         }
     };
 
-    const filteredTasks = filterDate
+    const filteredTasks = isDateFilterEnabled && filterDate
         ? tasks.filter(task => new Date(task.dueDate).toISOString().split('T')[0] === filterDate.toISOString().split('T')[0])
         : tasks;
 
@@ -115,19 +111,19 @@ function Task() {
     return (
         <Container>
             <h1 className="my-4">Lista de Tarefas</h1>
+            <Form.Check
+                type="checkbox"
+                label="Filtrar por data"
+                checked={isDateFilterEnabled}
+                onChange={(e) => setIsDateFilterEnabled(e.target.checked)}
+                className="mb-4"
+            />
+            {isDateFilterEnabled && (
+                <DateCarousel selectedDate={filterDate} onDateChange={setFilterDate} />
+            )}
             <Button variant="primary" className="mb-4" onClick={() => setShowModal(true)}>
                 <FaPlus className="me-2" /> Cadastrar Nova Tarefa
             </Button>
-            <Form.Group controlId="filterDate" className="mb-4">
-                <Form.Label>Filtrar por Data de Vencimento</Form.Label>
-                <DatePicker
-                    selected={filterDate}
-                    onChange={(date) => setFilterDate(date)}
-                    dateFormat="dd/MM/yyyy"
-                    className="form-control"
-                    placeholderText="Selecione uma data"
-                />
-            </Form.Group>
             {error && error === "Nenhuma tarefa cadastrada." ? (
                 <Alert variant="info">{error}</Alert>
             ) : (
