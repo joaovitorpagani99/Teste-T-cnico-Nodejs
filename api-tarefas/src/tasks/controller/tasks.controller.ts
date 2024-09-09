@@ -48,11 +48,10 @@ export class TasksController {
   @HttpCode(HttpStatus.OK)
   async update(
     @Req() req,
-    @Param("id") id: number,
     @Body() updateTaskDto: UpdateTaskDto
   ): Promise<Task> {
     const userId = req.user.sub;
-    return this.tasksService.update(id, { ...updateTaskDto, userId });
+    return this.tasksService.update(userId, { ...updateTaskDto });
   }
 
   @Delete(":id")
@@ -61,9 +60,9 @@ export class TasksController {
     return this.tasksService.remove(id);
   }
 
-  @Patch(":id/complete")
+  @Patch(":id/toggle-complete")
   @HttpCode(HttpStatus.OK)
-  async complete(@Param("id") id: number): Promise<Task> {
-    return this.tasksService.complete(id);
+  async toggleComplete(@Param("id") id: number): Promise<Task> {
+    return this.tasksService.toggleComplete(id);
   }
 }

@@ -4,12 +4,12 @@ import Login from '../pages/Login/Login';
 import Home from '../pages/Home/Home';
 import Footer from '../components/footer/footer';
 import Menu from "../components/nav/Menu";
-import Task from '../pages/Task/Task';
 import CadastroUsuario from '../pages/Cadastro/CadastroUsuario';
 import NotFound from '../pages/NotFound/NotFound';
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from '../contexts/AuthContext';
 import PrivateRoute from '../components/private/PrivateRoute';
+import Task from '../pages/Task/Task';
 
 import './App.css';
 

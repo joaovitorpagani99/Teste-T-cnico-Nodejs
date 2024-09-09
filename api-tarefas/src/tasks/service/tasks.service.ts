@@ -84,4 +84,15 @@ export class TasksService {
     await this.tasksRepository.save(task);
     return task;
   }
+
+  async toggleComplete(id: number): Promise<Task> {
+    const task = await this.findOne(id);
+    if (!task) {
+      throw new NotFoundException("Task not found");
+    }
+
+    task.isCompleted = !task.isCompleted;
+    await this.tasksRepository.save(task);
+    return task;
+  }
 }
