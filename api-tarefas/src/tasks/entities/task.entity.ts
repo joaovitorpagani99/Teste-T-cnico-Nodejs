@@ -1,6 +1,14 @@
+import { CreateTaskDto } from "./../dto/create-task.dto";
 import { IsBoolean, IsNumber, IsString, IsOptional } from "class-validator";
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity()
 export class Task {
@@ -26,7 +34,13 @@ export class Task {
 
   @Column({ type: "date", nullable: true })
   @IsOptional()
-  completedDate: string; 
+  completedDate: string;
+
+  @CreateDateColumn()
+  createAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
 
   @ManyToOne(() => User, (user) => user.tasks)
   user: User;

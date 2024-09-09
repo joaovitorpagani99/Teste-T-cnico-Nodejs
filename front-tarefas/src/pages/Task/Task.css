@@ -60,3 +60,21 @@
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
 }
+
+.accordion-item.pending .accordion-header {
+    background-color: #ffc107;
+    color: #fff;
+}
+
+.accordion-item.completed .accordion-header {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.accordion-item .accordion-body {
+    background-color: #f8f9fa;
+}
+
+.accordion+.accordion {
+    margin-top: 20px;
+}
