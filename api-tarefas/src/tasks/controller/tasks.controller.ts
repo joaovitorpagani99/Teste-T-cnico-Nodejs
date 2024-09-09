@@ -10,6 +10,7 @@ import {
   HttpCode,
   Req,
   Patch,
+  Query,
 } from "@nestjs/common";
 import { TasksService } from "../service/tasks.service";
 import { Task } from "../entities/task.entity";
@@ -24,8 +25,15 @@ export class TasksController {
   @HttpCode(HttpStatus.OK)
   async findAll(@Req() req): Promise<Task[]> {
     const userId = req.user.sub;
-    console.log(userId);
     return await this.tasksService.findAll(userId);
+  }
+
+  @Get("date")
+  @HttpCode(HttpStatus.OK)
+  async findAllDate(@Req() req, @Query("date") date: string): Promise<Task[]> {
+    const userId = req.user.sub;
+    console.log(date);
+    return await this.tasksService.findAllDate(userId, date);
   }
 
   @Get(":id")
@@ -48,10 +56,11 @@ export class TasksController {
   @HttpCode(HttpStatus.OK)
   async update(
     @Req() req,
+    @Param("id") idTask: number,
     @Body() updateTaskDto: UpdateTaskDto
   ): Promise<Task> {
     const userId = req.user.sub;
-    return this.tasksService.update(userId, { ...updateTaskDto });
+    return this.tasksService.update(userId, idTask, { ...updateTaskDto });
   }
 
   @Delete(":id")
