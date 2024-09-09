@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { getTasks, toggleCompleteTask, deleteTask, createTask, updateTask } from '../../Services/Tasks';
 import { Container, ListGroup, Dropdown, Alert, Accordion, Button, Form } from 'react-bootstrap';
@@ -9,7 +8,7 @@ import toast from 'react-hot-toast';
 import './Task.css';
 
 function Task() {
-    const [tasks, setTasks] = useState([]);
+    const [tasks, setTasks] = useState([]); // Inicializar como array vazio
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -25,12 +24,16 @@ function Task() {
                 }
 
                 const data = await getTasks(token);
-                setTasks(data);
-
+                console.log("Resposta da API:", data); // Adicionar log para verificar a resposta da API
+                if (Array.isArray(data)) {
+                    setTasks(data);
+                } else {
+                    throw new Error("A resposta da API não é um array");
+                }
             } catch (error) {
-                if (error.response && error.response.status === 404) {
+                if (error.message === "Nenhuma tarefa cadastrada.") {
                     setError("Nenhuma tarefa cadastrada.");
-                } else if (error.response && error.response.status === 401) {
+                } else if (error.message === "Não autorizado. Por favor, faça login novamente.") {
                     setError("Não autorizado. Por favor, faça login novamente.");
                 } else {
                     setError(error.message);
@@ -110,7 +113,7 @@ function Task() {
                     <div className="task-container">
                         <ListGroup>
                             {tasks.filter(task => !task.isCompleted).map(task => (
-                                <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item ${task.isCompleted ? 'completed' : ''}`}>
+                                <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item pending`}>
                                     <Form.Check
                                         type="checkbox"
                                         checked={task.isCompleted}
@@ -134,9 +137,6 @@ function Task() {
                                             <Dropdown.Item onClick={() => handleDelete(task.id)}>
                                                 <FaTrash className="me-2" /> Deletar
                                             </Dropdown.Item>
-                                            <Dropdown.Item onClick={() => handleCheckboxChange(task)}>
-                                                <FaCheck className="me-2" /> {task.isCompleted ? 'Marcar como Pendente' : 'Concluir'}
-                                            </Dropdown.Item>
                                         </Dropdown.Menu>
                                     </Dropdown>
                                 </ListGroup.Item>
@@ -150,7 +150,7 @@ function Task() {
                                 <div className="completed-task-container">
                                     <ListGroup>
                                         {tasks.filter(task => task.isCompleted).map(task => (
-                                            <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item ${task.isCompleted ? 'completed' : ''}`}>
+                                            <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item completed`}>
                                                 <Form.Check
                                                     type="checkbox"
                                                     checked={task.isCompleted}
@@ -161,7 +161,7 @@ function Task() {
                                                     <span style={{ textDecoration: 'line-through' }}>
                                                         {task.title}
                                                     </span>
-                                                    <p className="mb-0 text-muted small">{task.description}</p>
+                                                    <p class="mb-0 text-muted small">{task.description}</p>
                                                 </div>
                                                 <Dropdown>
                                                     <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0">
@@ -173,9 +173,6 @@ function Task() {
                                                         </Dropdown.Item>
                                                         <Dropdown.Item onClick={() => handleDelete(task.id)}>
                                                             <FaTrash className="me-2" /> Deletar
-                                                        </Dropdown.Item>
-                                                        <Dropdown.Item onClick={() => handleCheckboxChange(task)}>
-                                                            <FaCheck className="me-2" /> {task.isCompleted ? 'Marcar como Pendente' : 'Concluir'}
                                                         </Dropdown.Item>
                                                     </Dropdown.Menu>
                                                 </Dropdown>
