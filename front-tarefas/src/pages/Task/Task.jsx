@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { getTasks, updateTask, deleteTask, completeTask, createTask } from '../../../Services/Tasks';
+import { getTasks, updateTask, deleteTask, completeTask, createTask } from '../../Services/Tasks';
 import { Container, ListGroup, Dropdown, Alert, Accordion, Button } from 'react-bootstrap';
-import { FaEdit, FaTrash, FaCheck, FaEllipsisV, FaPlus } from 'react-icons/fa';
-import LoadingSpinner from '../../../components/loading/LoadingSpinner';
-import ModalTask from '../../../components/ModalTask/ModalTask';
+import { FaEdit, FaTrash, FaCheck, FaPlus } from 'react-icons/fa';
+import LoadingSpinner from '../../components/loading/LoadingSpinner';
+import ModalTask from '../../components/ModalTask/ModalTask';
 
-function ListagemTask() {
+import './Task.css';
+
+function Task() {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -183,4 +185,4 @@ function ListagemTask() {
     );
 }
 
-export default ListagemTask;
+export default Task;
