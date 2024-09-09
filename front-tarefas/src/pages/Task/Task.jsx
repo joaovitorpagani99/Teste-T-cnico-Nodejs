@@ -104,7 +104,11 @@ function Task() {
     };
 
     const filteredTasks = filterDate
-        ? tasks.filter(task => new Date(task.dueDate).toISOString().split('T')[0] === filterDate.toISOString().split('T')[0])
+        ? tasks.filter(task => {
+            const taskDueDate = new Date(task.dueDate).toISOString().split('T')[0];
+            const selectedFilterDate = filterDate.toISOString().split('T')[0];
+            return taskDueDate === selectedFilterDate;
+        })
         : tasks;
 
     if (loading) {
@@ -118,7 +122,7 @@ function Task() {
                 <FaPlus className="me-2" /> Cadastrar Nova Tarefa
             </Button>
             <Form.Group controlId="filterDate" className="mb-4">
-                <Form.Label>Filtrar por Data de Criação</Form.Label>
+                <Form.Label>Filtrar por Data de Vencimento</Form.Label>
                 <DatePicker
                     selected={filterDate}
                     onChange={(date) => setFilterDate(date)}
