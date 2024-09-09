@@ -43,6 +43,8 @@ export class TasksService {
     const task = new Task();
     task.title = createTaskDto.title;
     task.description = createTaskDto.description;
+    task.dueDate = createTaskDto.dueDate;
+    task.completedDate = createTaskDto.completedDate;
     task.user = user;
 
     return this.tasksRepository.save(task);
@@ -63,6 +65,8 @@ export class TasksService {
 
     task.title = updateTaskDto.title;
     task.description = updateTaskDto.description;
+    task.dueDate = updateTaskDto.dueDate;
+    task.completedDate = updateTaskDto.completedDate;
     task.user = user;
 
     await this.tasksRepository.save(task);
@@ -81,6 +85,7 @@ export class TasksService {
     }
 
     task.isCompleted = true;
+    task.completedDate = new Date().toISOString().split("T")[0];
     await this.tasksRepository.save(task);
     return task;
   }
@@ -92,6 +97,9 @@ export class TasksService {
     }
 
     task.isCompleted = !task.isCompleted;
+    task.completedDate = task.isCompleted
+      ? new Date().toISOString().split("T")[0]
+      : null;
     await this.tasksRepository.save(task);
     return task;
   }

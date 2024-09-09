@@ -1,15 +1,18 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/tasks'; // Certifique-se de que o endpoint está correto
+const API_URL = 'http://localhost:3000/tasks'; 
 
-export const getTasks = async (token) => {
+export const getTasks = async (token, date) => {
     try {
         const response = await axios.get(API_URL, {
             headers: {
                 'Authorization': `Bearer ${token}`
+            },
+            params: {
+                date: date 
             }
         });
-        console.log("Resposta da API no getTasks:", response.data); // Adicionar log para verificar a resposta da API
+        console.log("Resposta da API no getTasks:", response.data);
         return response.data;
     } catch (error) {
         throw new Error('Erro ao buscar tarefas');
@@ -25,7 +28,7 @@ export const createTask = async (task) => {
                 'Authorization': `Bearer ${token}`
             }
         });
-        console.log("Resposta da API no createTask:", response.data); // Adicionar log para verificar a resposta da API
+        console.log("Resposta da API no createTask:", response.data);
         return response.data;
     } catch (error) {
         throw new Error('Erro ao criar tarefa');
@@ -41,7 +44,7 @@ export const updateTask = async (taskId, task) => {
                 'Authorization': `Bearer ${token}`
             }
         });
-        console.log("Resposta da API no updateTask:", response.data); // Adicionar log para verificar a resposta da API
+        console.log("Resposta da API no updateTask:", response.data); 
         return response.data;
     } catch (error) {
         throw new Error('Erro ao atualizar tarefa');
@@ -56,7 +59,7 @@ export const deleteTask = async (taskId) => {
                 'Authorization': `Bearer ${token}`
             }
         });
-        console.log("Resposta da API no deleteTask:", response.data); // Adicionar log para verificar a resposta da API
+        console.log("Resposta da API no deleteTask:", response.data); 
         return response.data;
     } catch (error) {
         throw new Error('Erro ao deletar tarefa');
@@ -72,7 +75,7 @@ export const toggleCompleteTask = async (taskId) => {
                 'Authorization': `Bearer ${token}`
             }
         });
-        console.log("Resposta da API no toggleCompleteTask:", response.data); // Adicionar log para verificar a resposta da API
+        console.log("Resposta da API no toggleCompleteTask:", response.data); 
         return response.data;
     } catch (error) {
         throw new Error('Erro ao atualizar tarefa');
