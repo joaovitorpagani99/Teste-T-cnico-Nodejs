@@ -1,11 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
-import { getTasks, updateTask, deleteTask, completeTask, createTask } from '../../Services/Tasks';
-import { Container, ListGroup, Dropdown, Alert, Accordion, Button } from 'react-bootstrap';
-import { FaEdit, FaTrash, FaCheck, FaPlus } from 'react-icons/fa';
+import { getTasks, toggleCompleteTask, deleteTask, createTask, updateTask } from '../../Services/Tasks';
+import { Container, ListGroup, Dropdown, Alert, Accordion, Button, Form } from 'react-bootstrap';
+import { FaEdit, FaTrash, FaCheck, FaPlus, FaEllipsisV } from 'react-icons/fa';
 import LoadingSpinner from '../../components/loading/LoadingSpinner';
 import ModalTask from '../../components/ModalTask/ModalTask';
+import toast from 'react-hot-toast';
+import './Task.css'; // Importa o CSS personalizado
 
-function ListagemTask() {
+function Task() {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -46,21 +49,23 @@ function ListagemTask() {
         setShowEditModal(true);
     };
 
-    const handleSave = async (updatedTask) => {
+    const handleSave = async (task) => {
         try {
             const token = localStorage.getItem('token');
-            if (updatedTask.id) {
-                await updateTask(updatedTask.id, updatedTask, token);
-                setTasks(tasks.map(task => (task.id === updatedTask.id ? updatedTask : task)));
+            if (task.id) {
+                await updateTask(task.id, task);
+                setTasks(tasks.map(t => (t.id === task.id ? task : t)));
+                toast.success('Tarefa atualizada com sucesso!');
             } else {
-                const createdTask = await createTask(updatedTask, token);
-                setTasks([...tasks, createdTask]);
+                const newTask = await createTask(task);
+                setTasks([...tasks, newTask]);
+                toast.success('Tarefa criada com sucesso!');
             }
-            setShowModal(false);
             setShowEditModal(false);
+            setShowModal(false);
         } catch (error) {
             setError(error.message);
-            console.error("Erro ao salvar tarefa:", error);
+            toast.error('Erro ao salvar tarefa.');
         }
     };
 
@@ -69,20 +74,21 @@ function ListagemTask() {
             const token = localStorage.getItem('token');
             await deleteTask(id, token);
             setTasks(tasks.filter(task => task.id !== id));
+            toast.success('Tarefa removida com sucesso!');
         } catch (error) {
             setError(error.message);
-            console.error("Erro ao deletar tarefa:", error);
+            toast.error('Erro ao deletar tarefa.');
         }
     };
 
-    const handleComplete = async (id) => {
+    const handleCheckboxChange = async (task) => {
         try {
-            const token = localStorage.getItem('token');
-            await completeTask(id, token);
-            setTasks(tasks.map(task => (task.id === id ? { ...task, isCompleted: true } : task)));
+            const updatedTask = await toggleCompleteTask(task.id);
+            setTasks(tasks.map(t => (t.id === task.id ? updatedTask : t)));
+            toast.success(`Tarefa ${updatedTask.isCompleted ? 'concluída' : 'marcada como pendente'} com sucesso!`);
         } catch (error) {
             setError(error.message);
-            console.error("Erro ao concluir tarefa:", error);
+            toast.error('Erro ao atualizar tarefa.');
         }
     };
 
@@ -101,59 +107,82 @@ function ListagemTask() {
             ) : (
                 <>
                     {error && <Alert variant="danger">{error}</Alert>}
-                    <ListGroup>
-                        {tasks.filter(task => !task.isCompleted).map(task => (
-                            <ListGroup.Item key={task.id} className="d-flex justify-content-between align-items-center mb-2 rounded-4">
-                                <div>
-                                    <span style={{ textDecoration: task.isCompleted ? 'line-through' : 'none' }}>
-                                        {task.title}
-                                    </span>
-                                    <p className="mb-0 text-muted small">{task.description}</p>
-                                </div>
-                                <Dropdown>
-                                    <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0" />
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item onClick={() => handleEdit(task)}>
-                                            <FaEdit className="me-2" /> Editar
-                                        </Dropdown.Item>
-                                        <Dropdown.Item onClick={() => handleDelete(task.id)}>
-                                            <FaTrash className="me-2" /> Deletar
-                                        </Dropdown.Item>
-                                        <Dropdown.Item onClick={() => handleComplete(task.id)}>
-                                            <FaCheck className="me-2" /> Concluir
-                                        </Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </ListGroup.Item>
-                        ))}
-                    </ListGroup>
+                    <div className="task-container">
+                        <ListGroup>
+                            {tasks.filter(task => !task.isCompleted).map(task => (
+                                <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item ${task.isCompleted ? 'completed' : ''}`}>
+                                    <Form.Check
+                                        type="checkbox"
+                                        checked={task.isCompleted}
+                                        onChange={() => handleCheckboxChange(task)}
+                                        className="me-3 custom-checkbox"
+                                    />
+                                    <div className="flex-grow-1">
+                                        <span style={{ textDecoration: task.isCompleted ? 'line-through' : 'none' }}>
+                                            {task.title}
+                                        </span>
+                                        <p className="mb-0 text-muted small">{task.description}</p>
+                                    </div>
+                                    <Dropdown>
+                                        <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0">
+                                            <FaEllipsisV />
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => handleEdit(task)}>
+                                                <FaEdit className="me-2" /> Editar
+                                            </Dropdown.Item>
+                                            <Dropdown.Item onClick={() => handleDelete(task.id)}>
+                                                <FaTrash className="me-2" /> Deletar
+                                            </Dropdown.Item>
+                                            <Dropdown.Item onClick={() => handleCheckboxChange(task)}>
+                                                <FaCheck className="me-2" /> {task.isCompleted ? 'Marcar como Pendente' : 'Concluir'}
+                                            </Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </ListGroup.Item>
+                            ))}
+                        </ListGroup>
+                    </div>
                     <Accordion className="mt-4">
                         <Accordion.Item eventKey="0">
                             <Accordion.Header>Tarefas Concluídas</Accordion.Header>
                             <Accordion.Body>
-                                <ListGroup>
-                                    {tasks.filter(task => task.isCompleted).map(task => (
-                                        <ListGroup.Item key={task.id} className="d-flex justify-content-between align-items-center mb-2 rounded-4">
-                                            <div>
-                                                <span style={{ textDecoration: 'line-through' }}>
-                                                    {task.title}
-                                                </span>
-                                                <p className="mb-0 text-muted small">{task.description}</p>
-                                            </div>
-                                            <Dropdown>
-                                                <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0" />
-                                                <Dropdown.Menu>
-                                                    <Dropdown.Item onClick={() => handleEdit(task)}>
-                                                        <FaEdit className="me-2" /> Editar
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item onClick={() => handleDelete(task.id)}>
-                                                        <FaTrash className="me-2" /> Deletar
-                                                    </Dropdown.Item>
-                                                </Dropdown.Menu>
-                                            </Dropdown>
-                                        </ListGroup.Item>
-                                    ))}
-                                </ListGroup>
+                                <div className="completed-task-container">
+                                    <ListGroup>
+                                        {tasks.filter(task => task.isCompleted).map(task => (
+                                            <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item ${task.isCompleted ? 'completed' : ''}`}>
+                                                <Form.Check
+                                                    type="checkbox"
+                                                    checked={task.isCompleted}
+                                                    onChange={() => handleCheckboxChange(task)}
+                                                    className="me-3 custom-checkbox"
+                                                />
+                                                <div className="flex-grow-1">
+                                                    <span style={{ textDecoration: 'line-through' }}>
+                                                        {task.title}
+                                                    </span>
+                                                    <p className="mb-0 text-muted small">{task.description}</p>
+                                                </div>
+                                                <Dropdown>
+                                                    <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0">
+                                                        <FaEllipsisV />
+                                                    </Dropdown.Toggle>
+                                                    <Dropdown.Menu>
+                                                        <Dropdown.Item onClick={() => handleEdit(task)}>
+                                                            <FaEdit className="me-2" /> Editar
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item onClick={() => handleDelete(task.id)}>
+                                                            <FaTrash className="me-2" /> Deletar
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item onClick={() => handleCheckboxChange(task)}>
+                                                            <FaCheck className="me-2" /> {task.isCompleted ? 'Marcar como Pendente' : 'Concluir'}
+                                                        </Dropdown.Item>
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                            </ListGroup.Item>
+                                        ))}
+                                    </ListGroup>
+                                </div>
                             </Accordion.Body>
                         </Accordion.Item>
                     </Accordion>
@@ -183,4 +212,4 @@ function ListagemTask() {
     );
 }
 
-export default ListagemTask;
+export default Task;
