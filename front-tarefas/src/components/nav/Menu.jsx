@@ -16,7 +16,6 @@ function Menu() {
                     {user ? (
                         <>
                             <Link to="/" className="menu-link">Home</Link>
-                            <Link to="/cadastroTask" className="menu-link">Cadastrar Tarefas</Link>
                             <Link to="/tasks" className="menu-link">Tarefas</Link>
                             <a href="#" onClick={logout} className="menu-link">Logout</a>
                         </>

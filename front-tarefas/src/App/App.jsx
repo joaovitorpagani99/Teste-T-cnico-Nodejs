@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import CadastroTask from '../pages/Task/CadastroTask/Cadastro';
 import Login from '../pages/Login/Login';
 import Home from '../pages/Home/Home';
 import Footer from '../components/footer/footer';
@@ -24,8 +23,6 @@ function App() {
             <Routes>
               <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
               <Route path="/tasks" element={<PrivateRoute><ListagemTask /></PrivateRoute>} />
-              <Route path="/tasks/:id" element={<PrivateRoute><CadastroTask /></PrivateRoute>} />
-              <Route path="/cadastroTask" element={<PrivateRoute><CadastroTask /></PrivateRoute>} />
               <Route path='/cadastroUsuario' element={<CadastroUsuario />} />
               <Route path="/login" element={<Login />} />
               <Route path="*" element={<NotFound />} />
