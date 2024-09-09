@@ -1,0 +1,67 @@
+.date-carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 16px;
+    transition: background-color 0.3s;
+}
+
+.date-carousel:hover {
+    background-color: #e0e0e0;
+}
+
+.date-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+}
+
+.date-card {
+    text-align: center;
+    width: 80px;
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+    flex: 0 0 auto;
+    display: inline-block;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.date-card:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.date-today {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.date-past {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.date-future {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.date-selected {
+    background-color: #007bff;
+    color: white;
+    border: 2px solid #0056b3;
+    transform: scale(1.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}

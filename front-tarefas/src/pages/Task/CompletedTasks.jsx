@@ -12,12 +12,7 @@ function CompletedTasks() {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    throw new Error("Token not found in localStorage");
-                }
-
-                const data = await getTasks(token);
+                const data = await getTasks();
                 setTasks(data.filter(task => task.isCompleted));
             } catch (error) {
                 setError(error.message);
@@ -31,8 +26,7 @@ function CompletedTasks() {
 
     const handleCheckboxChange = async (task) => {
         try {
-            const token = localStorage.getItem('token');
-            const updatedTask = await toggleCompleteTask(task.id, token);
+            const updatedTask = await toggleCompleteTask(task.id);
             if (updatedTask.isCompleted) {
                 updatedTask.completedDate = new Date().toISOString().split('T')[0];
             } else {
@@ -54,7 +48,7 @@ function CompletedTasks() {
         <Container>
             <h1 className="my-4">Tarefas Concluídas</h1>
             {error && <Alert variant="danger">{error}</Alert>}
-            <Accordion defaultActiveKey="0" className="accordion-item completed">
+            <Accordion defaultActiveKey="0" className="accordion-item completed mt-5">
                 <Accordion.Item eventKey="0">
                     <Accordion.Header>Tarefas Concluídas</Accordion.Header>
                     <Accordion.Body>
@@ -72,7 +66,9 @@ function CompletedTasks() {
                                             {task.title}
                                         </span>
                                         <p className="mb-0 text-muted small">{task.description}</p>
-                                        <p className="mb-0 text-muted small">Data Prevista para Conclusão: {new Date(task.dueDate).toLocaleDateString()}</p>
+                                    </div>
+                                    <div className="text-end ms-2">
+                                        <p className="mb-0 text-muted small">Data de Criação: {new Date(task.createAt).toLocaleDateString()}</p>
                                         <p className="mb-0 text-muted small">Data de Conclusão: {task.completedDate ? new Date(task.completedDate).toLocaleDateString() : 'N/A'}</p>
                                     </div>
                                 </ListGroup.Item>
