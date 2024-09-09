@@ -59,11 +59,11 @@ function Task() {
         try {
             const token = localStorage.getItem('token');
             if (task.id) {
-                await updateTask(task.id, task);
+                await updateTask(task.id, task, token);
                 setTasks(tasks.map(t => (t.id === task.id ? task : t)));
                 toast.success('Tarefa atualizada com sucesso!');
             } else {
-                const newTask = await createTask(task);
+                const newTask = await createTask(task, token);
                 setTasks([...tasks, newTask]);
                 toast.success('Tarefa criada com sucesso!');
             }
@@ -89,7 +89,8 @@ function Task() {
 
     const handleCheckboxChange = async (task) => {
         try {
-            const updatedTask = await toggleCompleteTask(task.id);
+            const token = localStorage.getItem('token');
+            const updatedTask = await toggleCompleteTask(task.id, token);
             if (updatedTask.isCompleted) {
                 updatedTask.completedDate = new Date().toISOString().split('T')[0];
             } else {
@@ -104,11 +105,7 @@ function Task() {
     };
 
     const filteredTasks = filterDate
-        ? tasks.filter(task => {
-            const taskDueDate = new Date(task.dueDate).toISOString().split('T')[0];
-            const selectedFilterDate = filterDate.toISOString().split('T')[0];
-            return taskDueDate === selectedFilterDate;
-        })
+        ? tasks.filter(task => new Date(task.dueDate).toISOString().split('T')[0] === filterDate.toISOString().split('T')[0])
         : tasks;
 
     if (loading) {
