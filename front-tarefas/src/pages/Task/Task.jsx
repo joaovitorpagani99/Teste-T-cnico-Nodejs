@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import './Task.css';
 
 function Task() {
-    const [tasks, setTasks] = useState([]);
+    const [tasks, setTasks] = useState([]); // Inicializar como array vazio
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -24,11 +24,16 @@ function Task() {
                 }
 
                 const data = await getTasks(token);
-                setTasks(data);
+                console.log("Resposta da API:", data); // Adicionar log para verificar a resposta da API
+                if (Array.isArray(data)) {
+                    setTasks(data);
+                } else {
+                    throw new Error("A resposta da API não é um array");
+                }
             } catch (error) {
-                if (error.response && error.response.status === 404) {
+                if (error.message === "Nenhuma tarefa cadastrada.") {
                     setError("Nenhuma tarefa cadastrada.");
-                } else if (error.response && error.response.status === 401) {
+                } else if (error.message === "Não autorizado. Por favor, faça login novamente.") {
                     setError("Não autorizado. Por favor, faça login novamente.");
                 } else {
                     setError(error.message);
@@ -156,7 +161,7 @@ function Task() {
                                                     <span style={{ textDecoration: 'line-through' }}>
                                                         {task.title}
                                                     </span>
-                                                    <p className="mb-0 text-muted small">{task.description}</p>
+                                                    <p class="mb-0 text-muted small">{task.description}</p>
                                                 </div>
                                                 <Dropdown>
                                                     <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0">
