@@ -88,23 +88,7 @@ export const deleteTask = async (id) => {
     }
 };
 
-// Função para completar uma tarefa
-export const completeTask = async (id) => {
-    try {
-        const token = getToken();
-        const response = await axios.patch(`${apiUrl}/${id}/complete`, {}, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        return response.data;
-    } catch (error) {
-        console.error(`Erro ao completar a tarefa com ID ${id}:`, error);
-        throw error;
-    }
-};
 
-// tasks.js
 
 // Função para alternar o estado de conclusão de uma tarefa
 export const toggleCompleteTask = async (id) => {
