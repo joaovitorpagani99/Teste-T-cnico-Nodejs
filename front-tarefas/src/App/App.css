@@ -1,5 +1,6 @@
 .app-container {
     display: flex;
+    flex-direction: column;
     min-height: 100vh;
 }
 
@@ -20,10 +21,7 @@
     text-align: center;
     padding: 10px;
     background-color: #f1f1f1;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    transition: left 0.3s ease;
+    margin-top: auto;
 }
 
 .header.open~.footer {
