@@ -3,9 +3,7 @@
     text-align: center;
     padding: 10px;
     background-color: #f1f1f1;
-    position: fixed;
-    bottom: 0;
-    left: 250px;
+    margin-top: auto;
 }
 
 footer p {
