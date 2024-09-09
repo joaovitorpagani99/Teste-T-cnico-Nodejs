@@ -6,7 +6,7 @@ import { FaEdit, FaTrash, FaCheck, FaPlus, FaEllipsisV } from 'react-icons/fa';
 import LoadingSpinner from '../../components/loading/LoadingSpinner';
 import ModalTask from '../../components/ModalTask/ModalTask';
 import toast from 'react-hot-toast';
-import './Task.css'; // Importa o CSS personalizado
+import './Task.css';
 
 function Task() {
     const [tasks, setTasks] = useState([]);

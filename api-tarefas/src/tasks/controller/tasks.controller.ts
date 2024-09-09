@@ -59,10 +59,11 @@ export class TasksController {
   remove(@Param("id") id: number): Promise<void> {
     return this.tasksService.remove(id);
   }
-  @Patch(":id/complete")
+
+  @Patch(":id/toggle-complete")
   @HttpCode(HttpStatus.OK)
-  async complete(@Param("id") id: number): Promise<Task> {
-    return this.tasksService.complete(id);
+  async toggleComplete(@Param("id") id: number): Promise<Task> {
+    return this.tasksService.toggleComplete(id);
   }
 
   @Patch(":id/toggle-complete")
