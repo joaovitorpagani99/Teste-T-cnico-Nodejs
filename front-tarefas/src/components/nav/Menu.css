@@ -38,11 +38,17 @@
     padding: 10px 20px;
     border-radius: 4px;
     transition: color 0.3s ease, background-color 0.3s ease;
+    display: flex;
+    align-items: center;
 }
 
 .menu-link:hover {
     color: #007BFF;
     background-color: #bbdefb;
+}
+
+.menu-icon {
+    margin-right: 10px;
 }
 
 .menu-toggle {
@@ -64,4 +70,16 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
+}
+
+.logout-container {
+    margin-top: auto;
+}
+
+.logout-link {
+    background-color: #ffcccc;
+}
+
+.logout-link:hover {
+    background-color: #ff9999;
 }
