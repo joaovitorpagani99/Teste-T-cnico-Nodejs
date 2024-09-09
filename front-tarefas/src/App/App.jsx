@@ -10,6 +10,8 @@ import { Toaster } from "react-hot-toast";
 import { AuthProvider } from '../contexts/AuthContext';
 import PrivateRoute from '../components/private/PrivateRoute';
 import Task from '../pages/Task/Task';
+import CompletedTasks from '../pages/Task/CompletedTasks';
+import MyDay from '../pages/Task/MyDay';
 
 import './App.css';
 
@@ -23,6 +25,8 @@ function App() {
             <Routes>
               <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
               <Route path="/tasks" element={<PrivateRoute><Task /></PrivateRoute>} />
+              <Route path="/completed-tasks" element={<PrivateRoute><CompletedTasks /></PrivateRoute>} />
+              <Route path="/myday" element={<PrivateRoute><MyDay /></PrivateRoute>} />
               <Route path='/cadastroUsuario' element={<CadastroUsuario />} />
               <Route path="/login" element={<Login />} />
               <Route path="*" element={<NotFound />} />

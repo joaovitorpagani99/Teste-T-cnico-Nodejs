@@ -5,16 +5,18 @@ import { FaEdit, FaTrash, FaPlus, FaEllipsisV } from 'react-icons/fa';
 import LoadingSpinner from '../../components/loading/LoadingSpinner';
 import ModalTask from '../../components/ModalTask/ModalTask';
 import toast from 'react-hot-toast';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import './Task.css';
 
 function Task() {
-    const [tasks, setTasks] = useState([]); // Inicializar como array vazio
+    const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
-    const [filterDate, setFilterDate] = useState(''); 
+    const [filterDate, setFilterDate] = useState(null);
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -89,9 +91,9 @@ function Task() {
         try {
             const updatedTask = await toggleCompleteTask(task.id);
             if (updatedTask.isCompleted) {
-                updatedTask.completedDate = new Date().toISOString().split('T')[0]; 
+                updatedTask.completedDate = new Date().toISOString().split('T')[0];
             } else {
-                updatedTask.completedDate = null; 
+                updatedTask.completedDate = null;
             }
             setTasks(tasks.map(t => (t.id === task.id ? updatedTask : t)));
             toast.success(`Tarefa ${updatedTask.isCompleted ? 'concluída' : 'marcada como pendente'} com sucesso!`);
@@ -101,19 +103,9 @@ function Task() {
         }
     };
 
-    const handleFilterChange = async (e) => {
-        const selectedDate = e.target.value;
-        setFilterDate(selectedDate);
-
-        try {
-            const token = localStorage.getItem('token');
-            const response = await getTasks(token, selectedDate);
-            setTasks(response);
-        } catch (error) {
-            setError(error.message);
-            toast.error('Erro ao filtrar tarefas.');
-        }
-    };
+    const filteredTasks = filterDate
+        ? tasks.filter(task => new Date(task.dueDate).toISOString().split('T')[0] === filterDate.toISOString().split('T')[0])
+        : tasks;
 
     if (loading) {
         return <LoadingSpinner />;
@@ -122,95 +114,100 @@ function Task() {
     return (
         <Container>
             <h1 className="my-4">Lista de Tarefas</h1>
-            <Form.Group controlId="filterDate">
-                <Form.Label>Filtrar por Data de Criação</Form.Label>
-                <Form.Control
-                    type="date"
-                    value={filterDate}
-                    onChange={handleFilterChange}
-                />
-            </Form.Group>
             <Button variant="primary" className="mb-4" onClick={() => setShowModal(true)}>
                 <FaPlus className="me-2" /> Cadastrar Nova Tarefa
             </Button>
+            <Form.Group controlId="filterDate" className="mb-4">
+                <Form.Label>Filtrar por Data de Criação</Form.Label>
+                <DatePicker
+                    selected={filterDate}
+                    onChange={(date) => setFilterDate(date)}
+                    dateFormat="dd/MM/yyyy"
+                    className="form-control"
+                    placeholderText="Selecione uma data"
+                />
+            </Form.Group>
             {error && error === "Nenhuma tarefa cadastrada." ? (
                 <Alert variant="info">{error}</Alert>
             ) : (
                 <>
                     {error && <Alert variant="danger">{error}</Alert>}
-                    <div className="task-container">
-                        <ListGroup>
-                            {tasks.filter(task => !task.isCompleted).map(task => (
-                                <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item pending`}>
-                                    <Form.Check
-                                        type="checkbox"
-                                        checked={task.isCompleted}
-                                        onChange={() => handleCheckboxChange(task)}
-                                        className="me-3 custom-checkbox"
-                                    />
-                                    <div className="flex-grow-1">
-                                        <span style={{ textDecoration: task.isCompleted ? 'line-through' : 'none', opacity: task.isCompleted ? 0.5 : 1 }}>
-                                            {task.title}
-                                        </span>
-                                        <p className="mb-0 text-muted small">{task.description}</p>
-                                        <p className="mb-0 text-muted small">Data Prevista para Conclusão: {task.dueDate}</p>
-                                    </div>
-                                    <Dropdown>
-                                        <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0">
-                                            <FaEllipsisV />
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item onClick={() => handleEdit(task)}>
-                                                <FaEdit className="me-2" /> Editar
-                                            </Dropdown.Item>
-                                            <Dropdown.Item onClick={() => handleDelete(task.id)}>
-                                                <FaTrash className="me-2" /> Deletar
-                                            </Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </ListGroup.Item>
-                            ))}
-                        </ListGroup>
-                    </div>
-                    <Accordion className="mt-4">
+                    <Accordion defaultActiveKey="0" className="mb-4 accordion-item pending">
+                        <Accordion.Item eventKey="0">
+                            <Accordion.Header>Tarefas Pendentes</Accordion.Header>
+                            <Accordion.Body>
+                                <ListGroup>
+                                    {filteredTasks.filter(task => !task.isCompleted).map(task => (
+                                        <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item pending`}>
+                                            <Form.Check
+                                                type="checkbox"
+                                                checked={task.isCompleted}
+                                                onChange={() => handleCheckboxChange(task)}
+                                                className="me-3 custom-checkbox"
+                                            />
+                                            <div className="flex-grow-1">
+                                                <span style={{ textDecoration: task.isCompleted ? 'line-through' : 'none', opacity: task.isCompleted ? 0.5 : 1 }}>
+                                                    {task.title}
+                                                </span>
+                                                <p className="mb-0 text-muted small">{task.description}</p>
+                                                <p className="mb-0 text-muted small">Data Prevista para Conclusão: {new Date(task.dueDate).toLocaleDateString()}</p>
+                                            </div>
+                                            <Dropdown>
+                                                <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0">
+                                                    <FaEllipsisV />
+                                                </Dropdown.Toggle>
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item onClick={() => handleEdit(task)}>
+                                                        <FaEdit className="me-2" /> Editar
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item onClick={() => handleDelete(task.id)}>
+                                                        <FaTrash className="me-2" /> Deletar
+                                                    </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </ListGroup.Item>
+                                    ))}
+                                </ListGroup>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
+                    <Accordion defaultActiveKey="0" className="accordion-item completed">
                         <Accordion.Item eventKey="0">
                             <Accordion.Header>Tarefas Concluídas</Accordion.Header>
                             <Accordion.Body>
-                                <div className="completed-task-container">
-                                    <ListGroup>
-                                        {tasks.filter(task => task.isCompleted).map(task => (
-                                            <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item completed`}>
-                                                <Form.Check
-                                                    type="checkbox"
-                                                    checked={task.isCompleted}
-                                                    onChange={() => handleCheckboxChange(task)}
-                                                    className="me-3 custom-checkbox"
-                                                />
-                                                <div className="flex-grow-1">
-                                                    <span style={{ textDecoration: 'line-through', opacity: 0.5 }}>
-                                                        {task.title}
-                                                    </span>
-                                                    <p class="mb-0 text-muted small">{task.description}</p>
-                                                    <p className="mb-0 text-muted small">Data Prevista para Conclusão: {task.dueDate}</p>
-                                                    <p className="mb-0 text-muted small">Data de Conclusão: {task.completedDate}</p> {/* Exibir a data de conclusão */}
-                                                </div>
-                                                <Dropdown>
-                                                    <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0">
-                                                        <FaEllipsisV />
-                                                    </Dropdown.Toggle>
-                                                    <Dropdown.Menu>
-                                                        <Dropdown.Item onClick={() => handleEdit(task)}>
-                                                            <FaEdit className="me-2" /> Editar
-                                                        </Dropdown.Item>
-                                                        <Dropdown.Item onClick={() => handleDelete(task.id)}>
-                                                            <FaTrash className="me-2" /> Deletar
-                                                        </Dropdown.Item>
-                                                    </Dropdown.Menu>
-                                                </Dropdown>
-                                            </ListGroup.Item>
-                                        ))}
-                                    </ListGroup>
-                                </div>
+                                <ListGroup>
+                                    {filteredTasks.filter(task => task.isCompleted).map(task => (
+                                        <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item completed`}>
+                                            <Form.Check
+                                                type="checkbox"
+                                                checked={task.isCompleted}
+                                                onChange={() => handleCheckboxChange(task)}
+                                                className="me-3 custom-checkbox"
+                                            />
+                                            <div className="flex-grow-1">
+                                                <span style={{ textDecoration: 'line-through', opacity: 0.5 }}>
+                                                    {task.title}
+                                                </span>
+                                                <p className="mb-0 text-muted small">{task.description}</p>
+                                                <p className="mb-0 text-muted small">Data Prevista para Conclusão: {new Date(task.dueDate).toLocaleDateString()}</p>
+                                                <p className="mb-0 text-muted small">Data de Conclusão: {task.completedDate ? new Date(task.completedDate).toLocaleDateString() : 'N/A'}</p>
+                                            </div>
+                                            <Dropdown>
+                                                <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0">
+                                                    <FaEllipsisV />
+                                                </Dropdown.Toggle>
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item onClick={() => handleEdit(task)}>
+                                                        <FaEdit className="me-2" /> Editar
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item onClick={() => handleDelete(task.id)}>
+                                                        <FaTrash className="me-2" /> Deletar
+                                                    </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </ListGroup.Item>
+                                    ))}
+                                </ListGroup>
                             </Accordion.Body>
                         </Accordion.Item>
                     </Accordion>
