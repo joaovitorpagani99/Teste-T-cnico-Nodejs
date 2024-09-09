@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getTasks, toggleCompleteTask, deleteTask, createTask, updateTask } from '../../Services/Tasks';
 import { Container, ListGroup, Dropdown, Alert, Accordion, Button, Form } from 'react-bootstrap';
-import { FaEdit, FaTrash, FaCheck, FaPlus, FaEllipsisV } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaEllipsisV } from 'react-icons/fa';
 import LoadingSpinner from '../../components/loading/LoadingSpinner';
 import ModalTask from '../../components/ModalTask/ModalTask';
 import toast from 'react-hot-toast';
@@ -28,7 +28,7 @@ function Task() {
                 if (Array.isArray(data)) {
                     setTasks(data);
                 } else {
-                    throw new Error("A resposta da API não é um array");
+                    throw new Error("Não tem tarefas cadastradas.");
                 }
             } catch (error) {
                 if (error.message === "Nenhuma tarefa cadastrada.") {
