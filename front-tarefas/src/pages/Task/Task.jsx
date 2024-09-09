@@ -132,9 +132,6 @@ function Task() {
                                             <Dropdown.Item onClick={() => handleDelete(task.id)}>
                                                 <FaTrash className="me-2" /> Deletar
                                             </Dropdown.Item>
-                                            <Dropdown.Item onClick={() => handleCheckboxChange(task)}>
-                                                <FaCheck className="me-2" /> {task.isCompleted ? 'Marcar como Pendente' : 'Concluir'}
-                                            </Dropdown.Item>
                                         </Dropdown.Menu>
                                     </Dropdown>
                                 </ListGroup.Item>
@@ -171,9 +168,6 @@ function Task() {
                                                         </Dropdown.Item>
                                                         <Dropdown.Item onClick={() => handleDelete(task.id)}>
                                                             <FaTrash className="me-2" /> Deletar
-                                                        </Dropdown.Item>
-                                                        <Dropdown.Item onClick={() => handleCheckboxChange(task)}>
-                                                            <FaCheck className="me-2" /> {task.isCompleted ? 'Marcar como Pendente' : 'Concluir'}
                                                         </Dropdown.Item>
                                                     </Dropdown.Menu>
                                                 </Dropdown>
