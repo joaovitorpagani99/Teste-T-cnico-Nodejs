@@ -9,6 +9,7 @@ import {
   HttpStatus,
   HttpCode,
   Req,
+  Patch,
 } from "@nestjs/common";
 import { TasksService } from "../service/tasks.service";
 import { Task } from "../entities/task.entity";
@@ -53,9 +54,16 @@ export class TasksController {
     const userId = req.user.sub;
     return this.tasksService.update(id, { ...updateTaskDto, userId });
   }
+
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param("id") id: number): Promise<void> {
     return this.tasksService.remove(id);
+  }
+
+  @Patch(":id/complete")
+  @HttpCode(HttpStatus.OK)
+  async complete(@Param("id") id: number): Promise<Task> {
+    return this.tasksService.complete(id);
   }
 }

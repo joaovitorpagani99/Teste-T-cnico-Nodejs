@@ -1,3 +1,5 @@
+// front-tarefas/src/Services/Tasks.js
+
 import axios from "axios";
 
 const apiUrl = `${import.meta.env.VITE_API_URL}/tasks`;
@@ -82,6 +84,22 @@ export const deleteTask = async (id) => {
         });
     } catch (error) {
         console.error(`Erro ao deletar a tarefa com ID ${id}:`, error);
+        throw error;
+    }
+};
+
+// Função para completar uma tarefa
+export const completeTask = async (id) => {
+    try {
+        const token = getToken();
+        const response = await axios.patch(`${apiUrl}/${id}/complete`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Erro ao completar a tarefa com ID ${id}:`, error);
         throw error;
     }
 };
