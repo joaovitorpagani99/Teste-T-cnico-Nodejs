@@ -1,20 +1,33 @@
+import { IsBoolean, IsNumber, IsString, IsOptional } from "class-validator";
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, Long, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Task {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  @IsNumber()
+  id: number;
 
-    @Column()
-    title: string;
+  @Column()
+  @IsString()
+  title: string;
 
-    @Column()
-    description: string;
+  @Column()
+  @IsString()
+  description: string;
 
-    @Column({ default: false })
-    isCompleted: boolean;
+  @Column({ default: false })
+  @IsBoolean()
+  isCompleted: boolean;
 
-    @ManyToOne(() => User, user => user.tasks)
-    user: User;
+  @Column({ type: "date", nullable: true })
+  @IsOptional()
+  dueDate: string;
+
+  @Column({ type: "date", nullable: true })
+  @IsOptional()
+  completedDate: string; 
+
+  @ManyToOne(() => User, (user) => user.tasks)
+  user: User;
 }

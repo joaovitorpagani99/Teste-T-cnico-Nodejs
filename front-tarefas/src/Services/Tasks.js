@@ -2,11 +2,14 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/tasks'; // Certifique-se de que o endpoint está correto
 
-export const getTasks = async (token) => {
+export const getTasks = async (token, date) => {
     try {
         const response = await axios.get(API_URL, {
             headers: {
                 'Authorization': `Bearer ${token}`
+            },
+            params: {
+                date: date // Adicionar o parâmetro de data
             }
         });
         console.log("Resposta da API no getTasks:", response.data); // Adicionar log para verificar a resposta da API

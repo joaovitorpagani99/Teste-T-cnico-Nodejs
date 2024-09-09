@@ -1,18 +1,26 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from "react-router-dom";
 import AuthContext from '../../contexts/AuthContext';
+import { FaBars, FaTimes } from 'react-icons/fa';
 import './Menu.css';
 
 function Menu() {
     const { user, logout } = useContext(AuthContext);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleMenu = () => {
+        setIsOpen(!isOpen);
+    };
 
     return (
-        <header className="header w-100 px-3 py-2 bg-white text-dark">
-            <nav className="d-flex align-items-center justify-content-between">
-                <Link to="/" className="logo">
-                    <img src="/icone de tarefa.jpg" alt="Tarefas" width={50} />
-                </Link>
-                <div className="menu-links d-flex gap-3">
+        <>
+            <div className={`header ${isOpen ? 'open' : ''}`}>
+                <div className="logo">
+                    <Link to="/">
+                        <img src="/icone de tarefa.jpg" alt="Tarefas" width={50} />
+                    </Link>
+                </div>
+                <nav className="menu-links">
                     {user ? (
                         <>
                             <Link to="/" className="menu-link">Home</Link>
@@ -25,9 +33,13 @@ function Menu() {
                             <Link to="/cadastroUsuario" className="menu-link">Cadastrar</Link>
                         </>
                     )}
-                </div>
-            </nav>
-        </header>
+                </nav>
+                <button className="menu-toggle" onClick={toggleMenu}>
+                    {isOpen ? <FaTimes /> : <FaBars />}
+                </button>
+            </div>
+            {isOpen && <div className="overlay" onClick={toggleMenu}></div>}
+        </>
     );
 }
 

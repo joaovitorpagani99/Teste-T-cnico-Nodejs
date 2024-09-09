@@ -14,6 +14,7 @@ function Task() {
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
+    const [filterDate, setFilterDate] = useState(''); // Estado para a data de filtro
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -87,11 +88,30 @@ function Task() {
     const handleCheckboxChange = async (task) => {
         try {
             const updatedTask = await toggleCompleteTask(task.id);
+            if (updatedTask.isCompleted) {
+                updatedTask.completedDate = new Date().toISOString().split('T')[0]; 
+            } else {
+                updatedTask.completedDate = null; 
+            }
             setTasks(tasks.map(t => (t.id === task.id ? updatedTask : t)));
             toast.success(`Tarefa ${updatedTask.isCompleted ? 'concluída' : 'marcada como pendente'} com sucesso!`);
         } catch (error) {
             setError(error.message);
             toast.error('Erro ao atualizar tarefa.');
+        }
+    };
+
+    const handleFilterChange = async (e) => {
+        const selectedDate = e.target.value;
+        setFilterDate(selectedDate);
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await getTasks(token, selectedDate);
+            setTasks(response);
+        } catch (error) {
+            setError(error.message);
+            toast.error('Erro ao filtrar tarefas.');
         }
     };
 
@@ -102,6 +122,14 @@ function Task() {
     return (
         <Container>
             <h1 className="my-4">Lista de Tarefas</h1>
+            <Form.Group controlId="filterDate">
+                <Form.Label>Filtrar por Data de Criação</Form.Label>
+                <Form.Control
+                    type="date"
+                    value={filterDate}
+                    onChange={handleFilterChange}
+                />
+            </Form.Group>
             <Button variant="primary" className="mb-4" onClick={() => setShowModal(true)}>
                 <FaPlus className="me-2" /> Cadastrar Nova Tarefa
             </Button>
@@ -121,10 +149,11 @@ function Task() {
                                         className="me-3 custom-checkbox"
                                     />
                                     <div className="flex-grow-1">
-                                        <span style={{ textDecoration: task.isCompleted ? 'line-through' : 'none' }}>
+                                        <span style={{ textDecoration: task.isCompleted ? 'line-through' : 'none', opacity: task.isCompleted ? 0.5 : 1 }}>
                                             {task.title}
                                         </span>
                                         <p className="mb-0 text-muted small">{task.description}</p>
+                                        <p className="mb-0 text-muted small">Data Prevista para Conclusão: {task.dueDate}</p>
                                     </div>
                                     <Dropdown>
                                         <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0">
@@ -158,10 +187,12 @@ function Task() {
                                                     className="me-3 custom-checkbox"
                                                 />
                                                 <div className="flex-grow-1">
-                                                    <span style={{ textDecoration: 'line-through' }}>
+                                                    <span style={{ textDecoration: 'line-through', opacity: 0.5 }}>
                                                         {task.title}
                                                     </span>
                                                     <p class="mb-0 text-muted small">{task.description}</p>
+                                                    <p className="mb-0 text-muted small">Data Prevista para Conclusão: {task.dueDate}</p>
+                                                    <p className="mb-0 text-muted small">Data de Conclusão: {task.completedDate}</p> {/* Exibir a data de conclusão */}
                                                 </div>
                                                 <Dropdown>
                                                     <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0">
@@ -190,9 +221,9 @@ function Task() {
             <ModalTask
                 show={showModal}
                 handleClose={() => setShowModal(false)}
-                task={{ title: '', description: '' }}
+                task={{ title: '', description: '', dueDate: '' }}
                 handleSave={handleSave}
-                title="Cadastrar Nova Tarefa"
+                modalTitle="Cadastrar Nova Tarefa"
             />
 
             {/* Modal para editar tarefa */}
@@ -202,7 +233,7 @@ function Task() {
                     handleClose={() => setShowEditModal(false)}
                     task={currentTask}
                     handleSave={handleSave}
-                    title="Editar Tarefa"
+                    modalTitle="Editar Tarefa"
                 />
             )}
         </Container>
