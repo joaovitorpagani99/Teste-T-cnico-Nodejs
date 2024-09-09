@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { getTasks, toggleCompleteTask, deleteTask, createTask, updateTask } from '../../Services/Tasks';
 import { Container, ListGroup, Dropdown, Alert, Accordion, Button, Form } from 'react-bootstrap';
@@ -26,7 +25,6 @@ function Task() {
 
                 const data = await getTasks(token);
                 setTasks(data);
-
             } catch (error) {
                 if (error.response && error.response.status === 404) {
                     setError("Nenhuma tarefa cadastrada.");
@@ -110,7 +108,7 @@ function Task() {
                     <div className="task-container">
                         <ListGroup>
                             {tasks.filter(task => !task.isCompleted).map(task => (
-                                <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item ${task.isCompleted ? 'completed' : ''}`}>
+                                <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item pending`}>
                                     <Form.Check
                                         type="checkbox"
                                         checked={task.isCompleted}
@@ -150,7 +148,7 @@ function Task() {
                                 <div className="completed-task-container">
                                     <ListGroup>
                                         {tasks.filter(task => task.isCompleted).map(task => (
-                                            <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item ${task.isCompleted ? 'completed' : ''}`}>
+                                            <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item completed`}>
                                                 <Form.Check
                                                     type="checkbox"
                                                     checked={task.isCompleted}
