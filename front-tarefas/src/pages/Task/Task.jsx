@@ -8,6 +8,12 @@ import toast from 'react-hot-toast';
 import 'react-datepicker/dist/react-datepicker.css';
 import './Task.css';
 import DateCarousel from '../../components/DateCarousel/DateCarousel';
+import { parseISO, format, isSameDay } from 'date-fns';
+
+const formatDate = (dateString) => {
+    const date = parseISO(dateString);
+    return format(date, 'dd/MM/yyyy');
+};
 
 function Task() {
     const [tasks, setTasks] = useState([]);
@@ -22,6 +28,7 @@ function Task() {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
+                console.log("Data de filtro:", filterDate); // Adiciona este console.log para ver a data de filtro
                 const data = await getTasks(isDateFilterEnabled ? filterDate : null);
                 console.log("Resposta da API:", data);
                 if (Array.isArray(data)) {
@@ -101,8 +108,13 @@ function Task() {
     };
 
     const filteredTasks = isDateFilterEnabled && filterDate
-        ? tasks.filter(task => new Date(task.dueDate).toISOString().split('T')[0] === filterDate.toISOString().split('T')[0])
+        ? tasks.filter(task => {
+            const taskDueDate = parseISO(task.dueDate);
+            return isSameDay(taskDueDate, filterDate);
+        })
         : tasks;
+
+    console.log("Tarefas filtradas:", filteredTasks); // Adiciona este console.log para ver as tarefas filtradas
 
     if (loading) {
         return <LoadingSpinner />;
@@ -147,7 +159,7 @@ function Task() {
                                                     {task.title}
                                                 </span>
                                                 <p className="mb-0 text-muted small">{task.description}</p>
-                                                <p className="mb-0 text-muted small">Data Prevista para Conclusão: {new Date(task.dueDate).toLocaleDateString()}</p>
+                                                <p className="mb-0 text-muted small">Data Prevista para Conclusão: {formatDate(task.dueDate)}</p>
                                             </div>
                                             <Dropdown>
                                                 <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0">
@@ -186,8 +198,8 @@ function Task() {
                                                     {task.title}
                                                 </span>
                                                 <p className="mb-0 text-muted small">{task.description}</p>
-                                                <p className="mb-0 text-muted small">Data Prevista para Conclusão: {new Date(task.dueDate).toLocaleDateString()}</p>
-                                                <p className="mb-0 text-muted small">Data de Conclusão: {task.completedDate ? new Date(task.completedDate).toLocaleDateString() : 'N/A'}</p>
+                                                <p className="mb-0 text-muted small">Data Prevista para Conclusão: {formatDate(task.dueDate)}</p>
+                                                <p className="mb-0 text-muted small">Data de Conclusão: {task.completedDate ? formatDate(task.completedDate) : 'N/A'}</p>
                                             </div>
                                             <Dropdown>
                                                 <Dropdown.Toggle variant="link" id="dropdown-basic" className="p-0 border-0">

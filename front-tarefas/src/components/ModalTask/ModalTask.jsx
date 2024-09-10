@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
+const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    return new Date(dateString).toLocaleDateString('pt-BR', options);
+};
+
 function ModalTask({ show, handleClose, task, handleSave, modalTitle }) {
     const [title, setTitle] = useState(task.title || '');
     const [description, setDescription] = useState(task.description || '');

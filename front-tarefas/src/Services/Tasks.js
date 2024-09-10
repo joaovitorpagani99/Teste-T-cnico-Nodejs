@@ -2,26 +2,6 @@ import axios from 'axios';
 
 const API_URL = `${import.meta.env.VITE_API_URL}/tasks`;
 
-export const getTasksAll = async (date) => {
-    try {
-        const response = await axios.get(API_URL, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            params: {
-                date: date
-            }
-        });
-        console.log("Resposta da API no getTasks:", response.data);
-        return response.data;
-    } catch (error) {
-        throw new Error('Erro ao buscar tarefas');
-    }
-};
-
-
-
-
 export const getTasks = async (date) => {
     try {
         const token = localStorage.getItem('token');
@@ -30,6 +10,7 @@ export const getTasks = async (date) => {
         }
 
         const params = date ? { date: new Date(date).toISOString().split('T')[0] } : {};
+        console.log("Parâmetros da solicitação:", params); // Adiciona este console.log para ver os parâmetros da solicitação
 
         const response = await axios.get(API_URL, {
             headers: {
@@ -44,8 +25,6 @@ export const getTasks = async (date) => {
         throw new Error('Erro ao buscar tarefas');
     }
 };
-
-
 
 export const createTask = async (task) => {
     try {
@@ -62,7 +41,6 @@ export const createTask = async (task) => {
         throw new Error('Erro ao criar tarefa');
     }
 };
-
 
 export const updateTask = async (taskId, task) => {
     try {
