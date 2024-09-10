@@ -26,15 +26,16 @@ function Menu() {
                             <Link to="/" className="menu-link">
                                 <FaHome className="menu-icon" /> Home
                             </Link>
+                            <Link to="/myday" className="menu-link">
+                                <FaSun className="menu-icon" /> Meu Dia
+                            </Link>
                             <Link to="/tasks" className="menu-link">
                                 <FaTasks className="menu-icon" /> Todas as Tarefas
                             </Link>
                             <Link to="/completed-tasks" className="menu-link">
                                 <FaCheckCircle className="menu-icon" /> Tarefas Completas
                             </Link>
-                            <Link to="/myday" className="menu-link">
-                                <FaSun className="menu-icon" /> Meu Dia
-                            </Link>
+
                         </>
                     ) : (
                         <>

@@ -24,7 +24,7 @@ function Task() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [filterDate, setFilterDate] = useState(new Date());
-    const [isDateFilterEnabled, setIsDateFilterEnabled] = useState(true);
+    const [isDateFilterEnabled, setIsDateFilterEnabled] = useState(false); // Alterado para false
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -96,7 +96,7 @@ function Task() {
             const token = localStorage.getItem('token');
             const updatedTask = await toggleCompleteTask(task.id, token);
             if (updatedTask.isCompleted) {
-                updatedTask.completedDate = new Date().toISOString().split('T')[0];
+                updatedTask.completedDate = new Date(); // Enviar a data de hoje diretamente
             } else {
                 updatedTask.completedDate = null;
             }
