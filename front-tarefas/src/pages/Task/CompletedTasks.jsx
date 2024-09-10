@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { getTasks, toggleCompleteTask } from '../../Services/Tasks';
-import { Container, ListGroup, Alert, Accordion, Form } from 'react-bootstrap';
+import { Container, Alert, Accordion } from 'react-bootstrap';
 import LoadingSpinner from '../../components/loading/LoadingSpinner';
 import toast from 'react-hot-toast';
-import { parseISO, format } from 'date-fns';
-
-const formatDate = (dateString) => {
-    const date = parseISO(dateString);
-    return format(date, 'dd/MM/yyyy');
-};
+import TaskList from '../../components/TaskList/TaskList';
 
 function CompletedTasks() {
     const [tasks, setTasks] = useState([]);
@@ -20,7 +15,6 @@ function CompletedTasks() {
             try {
                 const data = await getTasks();
                 setTasks(data.filter(task => task.isCompleted));
-                console.log('Tarefas recebidas:', data);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -34,8 +28,11 @@ function CompletedTasks() {
     const handleCheckboxChange = async (task) => {
         try {
             const updatedTask = await toggleCompleteTask(task.id);
+            const today = new Date();
+            const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000);
+
             if (updatedTask.isCompleted) {
-                updatedTask.completedDate = new Date().toISOString().split('T')[0];
+                updatedTask.completedDate = localDate;
             } else {
                 updatedTask.completedDate = null;
             }
@@ -59,29 +56,12 @@ function CompletedTasks() {
                 <Accordion.Item eventKey="0">
                     <Accordion.Header>Tarefas Concluídas</Accordion.Header>
                     <Accordion.Body>
-                        <ListGroup>
-                            {tasks.map(task => (
-                                <ListGroup.Item key={task.id} className={`d-flex justify-content-between align-items-center mb-2 rounded-4 task-item completed`}>
-                                    <Form.Check
-                                        type="checkbox"
-                                        checked={task.isCompleted}
-                                        onChange={() => handleCheckboxChange(task)}
-                                        className="me-3 custom-checkbox"
-                                    />
-                                    <div className="flex-grow-1">
-                                        <span style={{ textDecoration: 'line-through', opacity: 0.5 }}>
-                                            {task.title}
-                                        </span>
-                                        <p className="mb-0 text-muted small">{task.description}</p>
-                                    </div>
-                                    <div className="text-end ms-2">
-                                        <p className="mb-0 text-muted small">Data de Criação: {formatDate(task.createAt)}</p>
-                                        <p className="mb-0 text-muted small">Data de Conclusão: {task.completedDate ? formatDate(task.completedDate) : 'N/A'}</p>
-                                        <p className="mb-0 text-muted small">Data de Vencimento: {formatDate(task.dueDate)}</p>
-                                    </div>
-                                </ListGroup.Item>
-                            ))}
-                        </ListGroup>
+                        <TaskList
+                            tasks={tasks}
+                            onCheckboxChange={handleCheckboxChange}
+                            onEdit={() => { }}
+                            onDelete={() => { }}
+                        />
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>
