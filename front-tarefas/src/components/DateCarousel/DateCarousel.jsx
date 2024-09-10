@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button, Card } from 'react-bootstrap';
 import './DateCarousel.css';
 
@@ -6,7 +6,12 @@ const DateCarousel = ({ selectedDate, onDateChange }) => {
     const [startDate, setStartDate] = useState(selectedDate || new Date());
     const carouselRef = useRef(null);
 
+    useEffect(() => {
+        setStartDate(selectedDate);
+    }, [selectedDate]);
+
     const handleDateChange = (date) => {
+        console.log("Data selecionada no carrossel:", date); // Adiciona este console.log para ver a data selecionada
         setStartDate(date);
         onDateChange(date);
     };
