@@ -32,14 +32,13 @@ function MyDay() {
 
     const handleSave = async (task) => {
         try {
-            const today = new Date().toISOString().split('T')[0];
             if (task.id) {
-                const updatedTask = { ...task, dueDate: today };
+                const updatedTask = { ...task };
                 const response = await updateTask(updatedTask.id, updatedTask);
                 setTasks(tasks.map(t => (t.id === updatedTask.id ? response : t)));
                 toast.success('Tarefa atualizada com sucesso!');
             } else {
-                const newTask = { ...task, dueDate: today };
+                const newTask = { ...task };
                 const createdTask = await createTask(newTask);
                 setTasks([...tasks, createdTask]);
                 toast.success('Tarefa criada com sucesso!');
@@ -51,6 +50,7 @@ function MyDay() {
             toast.error('Erro ao salvar tarefa.');
         }
     };
+
 
     const handleEdit = (task) => {
         setCurrentTask(task);
@@ -71,6 +71,14 @@ function MyDay() {
     const handleCheckboxChange = async (task) => {
         try {
             const updatedTask = await toggleCompleteTask(task.id);
+            const today = new Date();
+            const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+
+            if (updatedTask.isCompleted) {
+                updatedTask.completedDate = localDate;
+            } else {
+                updatedTask.completedDate = null;
+            }
             setTasks(tasks.map(t => (t.id === task.id ? updatedTask : t)));
             toast.success(`Tarefa ${updatedTask.isCompleted ? 'concluída' : 'marcada como pendente'} com sucesso!`);
         } catch (error) {
@@ -78,6 +86,7 @@ function MyDay() {
             toast.error('Erro ao atualizar tarefa.');
         }
     };
+
 
     if (loading) {
         return <LoadingSpinner />;

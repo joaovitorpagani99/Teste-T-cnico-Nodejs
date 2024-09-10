@@ -15,7 +15,6 @@ function CompletedTasks() {
             try {
                 const data = await getTasks();
                 setTasks(data.filter(task => task.isCompleted));
-                console.log('Tarefas recebidas:', data);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -29,8 +28,11 @@ function CompletedTasks() {
     const handleCheckboxChange = async (task) => {
         try {
             const updatedTask = await toggleCompleteTask(task.id);
+            const today = new Date();
+            const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000);
+
             if (updatedTask.isCompleted) {
-                updatedTask.completedDate = new Date().toISOString().split('T')[0];
+                updatedTask.completedDate = localDate;
             } else {
                 updatedTask.completedDate = null;
             }

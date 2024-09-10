@@ -16,6 +16,18 @@ const formatDate = (dateString) => {
     return format(date, 'dd/MM/yyyy');
 };
 
+const getBrasiliaDate = () => {
+    const brDate = new Intl.DateTimeFormat('pt-BR', {
+        timeZone: 'America/Sao_Paulo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).format(new Date());
+
+    const [day, month, year] = brDate.split('/');
+    return `${year}-${month}-${day}`;
+};
+
 function Task() {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -24,7 +36,7 @@ function Task() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [filterDate, setFilterDate] = useState(new Date());
-    const [isDateFilterEnabled, setIsDateFilterEnabled] = useState(true);
+    const [isDateFilterEnabled, setIsDateFilterEnabled] = useState(false); // Inicia como false
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -95,8 +107,10 @@ function Task() {
         try {
             const token = localStorage.getItem('token');
             const updatedTask = await toggleCompleteTask(task.id, token);
+            const localDate = getBrasiliaDate();
+
             if (updatedTask.isCompleted) {
-                updatedTask.completedDate = new Date().toISOString().split('T')[0];
+                updatedTask.completedDate = localDate; // Define a data de conclusão como a data de hoje no horário de Brasília
             } else {
                 updatedTask.completedDate = null;
             }
