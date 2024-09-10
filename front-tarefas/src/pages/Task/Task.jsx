@@ -12,6 +12,7 @@ import { parseISO, format, isSameDay } from 'date-fns';
 
 const formatDate = (dateString) => {
     const date = parseISO(dateString);
+    console.log("Data formatada:", format(date, 'dd/MM/yyyy'));
     return format(date, 'dd/MM/yyyy');
 };
 
